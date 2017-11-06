@@ -1,6 +1,8 @@
 ﻿
 public enum EdgeDirection
 {
+    Up,
+    Right,
     Down,
-    Right
+    Left
 }

@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
-public interface IPlayer{
-    Color color { get; }
+public abstract class IPlayer : MonoBehaviour{
+    public abstract Color color { get; }
+    public abstract Move MakeMove(Board board, float timeLimit);
 }
