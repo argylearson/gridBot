@@ -7,7 +7,6 @@ public class Edge : MonoBehaviour {
     private SpriteRenderer sprite;
     public readonly int x;
     public readonly int y;
-    public readonly EdgeDirection edgeDirection;
     private int _traversals;
 
     public int Traversals
@@ -17,7 +16,7 @@ public class Edge : MonoBehaviour {
     #endregion
 
     #region constructors
-    public Edge (int x, int y, EdgeDirection edgeDirection)
+    public Edge (int x, int y)
     {
         this.x = x;
         this.y = y;

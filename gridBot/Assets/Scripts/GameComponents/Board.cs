@@ -30,18 +30,26 @@ public class Board : MonoBehaviour{
 
     private void Start()
     {
-        vertEdges = new Edge[width, height];
-        horzEdges = new Edge[width, height];
+        vertEdges = new Edge[width + 1, height];
+        horzEdges = new Edge[width, height + 1];
 
-        for (int i = 0; i < width; i++)
+        for (int i = 0; i <= width; i++)
         {
-            for (int j = 0; j < height; j++)
+            for (int j = 0; j <= height; j++)
             {
-                vertEdges[i, j] = Instantiate(edge, new Vector3(i, j, 0), Quaternion.Euler(90f, 0f, 0f), this.transform);
-                vertEdges[i, j].transform.name = "vert: " + i + ", " + j;
-                horzEdges[i, j] = Instantiate(edge, new Vector3(i, j, 0), Quaternion.identity, this.transform);
-                horzEdges[i, j].transform.name = "horz: " + i + ", " + j;
+                if (i != width) horzEdges[i, j] = CreateEdge(i, j, EdgeDirection.Right);
+                if (j != height) vertEdges[i, j] = CreateEdge(i, j, EdgeDirection.Down);
             }
         }
+    }
+
+    private Edge CreateEdge(int i, int j, EdgeDirection direction)
+    {
+        var position = direction == EdgeDirection.Right ? new Vector3(i + .4f, j, 0) : new Vector3(i - .1f, j + .5f, 0);
+        var result = Instantiate(edge, position, Quaternion.identity, this.transform);
+        result.transform.name = direction == EdgeDirection.Right ? "horz: " : "vert: ";
+        result.transform.name += i + ", " + j;
+        if (direction == EdgeDirection.Down) result.transform.Rotate(Vector3.forward * -90);
+        return result;
     }
 }
