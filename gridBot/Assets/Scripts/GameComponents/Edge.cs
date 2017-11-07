@@ -25,7 +25,7 @@ public class Edge : MonoBehaviour {
         sprite.color = Color.gray;
         sprite.size = new Vector2(1, 1);
         sprite.transform.parent = this.transform;
-        transform.position = new Vector3Int(x,y,0);
+        transform.position = new Vector3(x,y,0);
     }
     #endregion
 
