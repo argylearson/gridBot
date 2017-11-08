@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
 public class Board : MonoBehaviour{
 
@@ -27,6 +29,17 @@ public class Board : MonoBehaviour{
      *  (0,0) - (1,0) - (2,0)
     */
 
+
+    public bool IsMoveLegal(IPlayer player, Move move)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IEnumerable<Move> GetLegalMoves(IPlayer player)
+    {
+        var result = new List<Move>();
+        throw new NotImplementedException();
+    }
 
     private void Start()
     {
