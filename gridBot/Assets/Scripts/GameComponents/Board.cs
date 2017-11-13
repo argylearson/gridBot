@@ -30,12 +30,12 @@ public class Board : MonoBehaviour{
     */
 
 
-    public bool IsMoveLegal(IPlayer player, Move move)
+    public bool IsMoveLegal(Player player, Move move)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Move> GetLegalMoves(IPlayer player)
+    public IEnumerable<Move> GetLegalMoves(Player player)
     {
         var result = new List<Move>();
         throw new NotImplementedException();

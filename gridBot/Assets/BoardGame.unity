@@ -349,8 +349,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b623b2fc4eb9f57489071cfb711c4c7c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player1: {fileID: 537688279}
   board: {fileID: 1190444722}
+  playerTypes: 00000000
+  playerSprite: {fileID: 21300000, guid: 12a42cdf574126a45a64e5521a84f4dd, type: 3}
 --- !u!4 &1225312835
 Transform:
   m_ObjectHideFlags: 0

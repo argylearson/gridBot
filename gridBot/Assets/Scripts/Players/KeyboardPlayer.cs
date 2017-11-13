@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class KeyboardPlayer : IPlayer
+public class KeyboardPlayer : Player
 {
     private readonly Color _color = Color.red;
 
@@ -8,20 +8,13 @@ public class KeyboardPlayer : IPlayer
     {
         get { return _color; }
     }
-
-    [SerializeField]
-    private int x;
-    [SerializeField]
-    private int y;
+    
+    public int x;
+    public int y;
 
     void Start ()
     {
         this.GetComponent<SpriteRenderer>().color = _color;
-    }
-
-    void Update()
-    {
-        transform.position = new Vector3(x - .1f, y);
     }
 
     public override Move MakeMove(Board board, float timeLimit = 10f)
