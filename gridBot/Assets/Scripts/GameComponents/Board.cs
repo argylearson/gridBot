@@ -41,7 +41,7 @@ public class Board : MonoBehaviour{
         throw new NotImplementedException();
     }
 
-    private void Start()
+    private void Awake()
     {
         vertEdges = new Edge[width + 1, height];
         horzEdges = new Edge[width, height + 1];

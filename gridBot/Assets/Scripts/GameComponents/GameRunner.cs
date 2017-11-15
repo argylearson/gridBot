@@ -6,54 +6,35 @@ public class GameRunner : MonoBehaviour {
     
     [SerializeField]
     private Board board;
-    private List<Player> players;
-    private float[] startTimes;
-    private Vector3[] startPositions;
-    private Vector3[] endPositions;
+    private List<PlayerState> players;
     [SerializeField]
     private PlayerType[] playerTypes;
     [SerializeField]
+    private Color[] playerColors;
+    [SerializeField]
     private Sprite playerSprite;
 
-    private void Start()
+    private void Awake()
     {
-        players = new List<Player>();
-        startTimes = new float[playerTypes.Length];
-        startPositions = new Vector3[playerTypes.Length];
-        endPositions = new Vector3[playerTypes.Length];
+        players = new List<PlayerState>();
         for (int i = 0; i < playerTypes.Length; i++)
         {
+            var state = new PlayerState();
             var player = new GameObject("player " + i);
             switch (playerTypes[i])
             {
                 case (PlayerType.Keyboard):
-                    var keyboardPlayer = player.AddComponent<KeyboardPlayer>();
-                    keyboardPlayer.x = 0;
-                    keyboardPlayer.y = 0;
-                    startPositions[i] = new Vector3(0,0);
-                    endPositions[i] = new Vector3(0,0);
-                    players.Add(keyboardPlayer);
+                    state.player = player.AddComponent<KeyboardPlayer>();
+                    state.x = 0;
+                    state.y = 0;
+                    state.startPosition = new Vector3(0,0);
+                    state.endPosition = state.startPosition;
+                    players.Add(state);
                     player.AddComponent<SpriteRenderer>().sprite = playerSprite;
                     Instantiate(player, new Vector3(-.1f, 0), Quaternion.identity, this.transform);
                     break;
             }
         }
-
-        StartGame();
-    }
-
-    private void StartGame()
-    {
-        startPositions[0] = endPositions[0];
-        Move move = null;
-        while (move == null)
-        {
-            move = players[0].MakeMove(board, 50f);
-        }
-        RecolorEdge(move);
-        endPositions[0] = new Vector3(move.x - .1f, move.y);
-        startTimes[0] = Time.time;
-        endPositions[0] = new Vector3();
     }
 
     private void RecolorEdge(Move move)
@@ -79,7 +60,9 @@ public class GameRunner : MonoBehaviour {
     {
         for (int i = 0; i < playerTypes.Length; i++)
         {
-            players[i].transform.position = Vector3.Lerp(startPositions[i], endPositions[i], Time.time - startTimes[i]);
+            players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition, Time.time - players[i].startTime);
         }
+        var move = players[0].player.MakeMove(board, 0f);
+        if (move != null) RecolorEdge(move);
     }
 }

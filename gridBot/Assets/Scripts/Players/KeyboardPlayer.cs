@@ -8,9 +8,6 @@ public class KeyboardPlayer : Player
     {
         get { return _color; }
     }
-    
-    public int x;
-    public int y;
 
     void Start ()
     {
@@ -19,60 +16,51 @@ public class KeyboardPlayer : Player
 
     public override Move MakeMove(Board board, float timeLimit = 10f)
     {
-        float time = 0f;
-        while (time < timeLimit)
+        Move move = null;
+        if (Input.GetKeyDown(KeyCode.W))
         {
-            if (Input.GetKeyDown(KeyCode.W))
+            move = new Move()
             {
-                var move = new Move()
-                {
-                    direction = EdgeDirection.Up,
-                    player = this,
-                    x = x,
-                    y = y
-                };
-                y += 1;
-                return move;
-            }
-            if (Input.GetKeyDown(KeyCode.A))
-            {
-                var move = new Move()
-                {
-                    direction = EdgeDirection.Left,
-                    player = this,
-                    x = x,
-                    y = y
-                };
-                x -= 1;
-                return move;
-            }
-            if (Input.GetKeyDown(KeyCode.S))
-            {
-                var move = new Move()
-                {
-                    direction = EdgeDirection.Down,
-                    player = this,
-                    x = x,
-                    y = y
-                };
-                y -= 1;
-                return move;
-            }
-            if (Input.GetKeyDown(KeyCode.D))
-            {
-                var move = new Move()
-                {
-                    direction = EdgeDirection.Right,
-                    player = this,
-                    x = x,
-                    y = y
-                };
-                x += 1;
-                return move;
-            }
-
-            time += Time.deltaTime;
+                direction = EdgeDirection.Up,
+                player = this,
+                x = x,
+                y = y
+            };
+            y += 1;
         }
-        return null;
+        else if (Input.GetKeyDown(KeyCode.A))
+        {
+            move = new Move()
+            {
+                direction = EdgeDirection.Left,
+                player = this,
+                x = x,
+                y = y
+            };
+            x -= 1;
+        }
+        else if (Input.GetKeyDown(KeyCode.S))
+        {
+            move = new Move()
+            {
+                direction = EdgeDirection.Down,
+                player = this,
+                x = x,
+                y = y
+            };
+            y -= 1;
+        }
+        if (Input.GetKeyDown(KeyCode.D))
+        {
+            move = new Move()
+            {
+                direction = EdgeDirection.Right,
+                player = this,
+                x = x,
+                y = y
+            };
+            x += 1;
+        }
+        return move;
     }
 }
