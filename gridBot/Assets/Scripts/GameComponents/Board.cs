@@ -9,6 +9,7 @@ public class Board : MonoBehaviour{
     [Range(1,10)]
     public int height;
     public Edge edge;
+    public Vector2Int[] playerPositions;
 
     /*represents all of the vertical edges in the board
     uses [x,y] notation to indicate the top vertex of

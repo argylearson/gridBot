@@ -2,18 +2,6 @@
 
 public class KeyboardPlayer : Player
 {
-    private readonly Color _color = Color.red;
-
-    public override Color color
-    {
-        get { return _color; }
-    }
-
-    void Start ()
-    {
-        this.GetComponent<SpriteRenderer>().color = _color;
-    }
-
     public override Move MakeMove(Board board, float timeLimit = 10f)
     {
         Move move = null;

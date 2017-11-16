@@ -235,6 +235,7 @@ MonoBehaviour:
   width: 4
   height: 3
   edge: {fileID: 114626543297518976, guid: ff1e78601e452f84abb655f590e6788c, type: 2}
+  playerPositions: []
 --- !u!1 &1225312833
 GameObject:
   m_ObjectHideFlags: 0
@@ -245,7 +246,7 @@ GameObject:
   - component: {fileID: 1225312835}
   - component: {fileID: 1225312834}
   m_Layer: 0
-  m_Name: GamerRunner
+  m_Name: GameRunner
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -263,10 +264,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   board: {fileID: 1190444722}
-  playerTypes: 00000000
+  playerTypes: 0000000000000000
   playerColors:
-  - {r: 0.04962785, g: 0.015686274, b: 1, a: 0}
+  - {r: 1, g: 0, b: 0, a: 0}
+  - {r: 0.1726319, g: 0.20085973, b: 0.75735295, a: 0}
   playerSprite: {fileID: 21300000, guid: 12a42cdf574126a45a64e5521a84f4dd, type: 3}
+  activePlayerNumber: 0
+  timeLimit: 0
+  currentPlayersTime: 0
 --- !u!4 &1225312835
 Transform:
   m_ObjectHideFlags: 0
