@@ -3,7 +3,7 @@
 public class Edge : MonoBehaviour {
 
     #region fields and properties
-    public IPlayer owner;
+    public Player owner;
     private SpriteRenderer sprite;
     public readonly int x;
     public readonly int y;

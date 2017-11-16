@@ -9,6 +9,7 @@ public class Board : MonoBehaviour{
     [Range(1,10)]
     public int height;
     public Edge edge;
+    public Vector2Int[] playerPositions;
 
     /*represents all of the vertical edges in the board
     uses [x,y] notation to indicate the top vertex of
@@ -30,18 +31,18 @@ public class Board : MonoBehaviour{
     */
 
 
-    public bool IsMoveLegal(IPlayer player, Move move)
+    public bool IsMoveLegal(Player player, Move move)
     {
         throw new NotImplementedException();
     }
 
-    public IEnumerable<Move> GetLegalMoves(IPlayer player)
+    public IEnumerable<Move> GetLegalMoves(Player player)
     {
         var result = new List<Move>();
         throw new NotImplementedException();
     }
 
-    private void Start()
+    private void Awake()
     {
         vertEdges = new Edge[width + 1, height];
         horzEdges = new Edge[width, height + 1];
