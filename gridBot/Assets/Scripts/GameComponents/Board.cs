@@ -10,7 +10,7 @@ public class Board{
     public int height;
     public Edge edge;
     public int maxTraversals = 3;
-    public Dictionary<Color,Pair<int, int>> playerPositions;
+    public Pair<int, int>[] playerPositions;
     public Dictionary<Color, int> score;
 
     /*represents all of the vertical edges in the board
@@ -53,9 +53,10 @@ public class Board{
                 break;
         }
         result &= targetSpace != null && 
-            !playerPositions.ContainsValue(targetSpace) &&
-            (targetSpace.x > 0 || targetSpace.y > 0 || targetSpace.x < width || targetSpace.y < height) &&
+            !SpaceOccupied(targetSpace) &&
+            (targetSpace.x >= 0 && targetSpace.y >= 0 && targetSpace.x <= width && targetSpace.y <= height) &&
             !MaxTraversals(move);
+        Debug.Log("is move legal: " + result);
         return result;
     }
 
@@ -88,12 +89,11 @@ public class Board{
     public Board DeepCopy()
     {
         var newB = new Board(width, height);
-        newB.playerPositions = new Dictionary<Color, Pair<int, int>>() ;
-        foreach (var position in playerPositions)
+        newB.playerPositions = new Pair<int, int>[playerPositions.Length] ;
+        for (int i = 0; i < playerPositions.Length; i++)
         {
-            var color = new Color(position.Key.r, position.Key.g, position.Key.b);
-            var newPosition = new Pair<int, int>(position.Value.x, position.Value.y);
-            newB.playerPositions.Add(color, newPosition);
+            var newPosition = new Pair<int, int>(playerPositions[i].x, playerPositions[i].y);
+            newB.playerPositions[i] = newPosition;
         }
         newB.vertEdges = new Edge[width + 1, height];
         newB.horzEdges = new Edge[width, height + 1];
@@ -111,6 +111,17 @@ public class Board{
         return newB;
     }
 
+    private bool SpaceOccupied(Pair<int, int> targetSpace)
+    {
+        var result = false;
+        for (int i = 0; i < playerPositions.Length; i++)
+        {
+            result |= (targetSpace.x == playerPositions[i].x &&
+                       targetSpace.y == playerPositions[i].y);
+        }
+        return result;
+    }
+
     private bool MaxTraversals(Move move)
     {
         Pair<int, int> targetSpace = null;
@@ -126,11 +137,11 @@ public class Board{
                 edges = horzEdges;
                 break;
             case EdgeDirection.Right:
-                targetSpace = new Pair<int, int>(move.x + 1, move.y);
+                targetSpace = new Pair<int, int>(move.x, move.y);
                 edges = horzEdges;
                 break;
             case EdgeDirection.Up:
-                targetSpace = new Pair<int, int>(move.x, move.y + 1);
+                targetSpace = new Pair<int, int>(move.x, move.y);
                 edges = vertEdges;
                 break;
         }

@@ -27,7 +27,7 @@ public class GameRunner : MonoBehaviour {
     private void Awake()
     {
         players = new List<PlayerState>();
-        board.board.playerPositions = new Dictionary<Color, Pair<int, int>>();
+        board.board.playerPositions = new Pair<int, int>[playerTypes.Length];
         for (int i = 0; i < playerTypes.Length; i++)
         {
             var state = new PlayerState();
@@ -35,7 +35,7 @@ public class GameRunner : MonoBehaviour {
             {
                 case (PlayerType.Keyboard):
                     CreatePlayer(state, typeof(KeyboardPlayer), i);
-                    board.board.playerPositions.Add(playerColors[i], new Pair<int, int>(players[i].x, players[i].y));
+                    board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
                     break;
             }
         }
@@ -83,27 +83,31 @@ public class GameRunner : MonoBehaviour {
             if (board.board.IsMoveLegal(move)) {
                 players[activePlayerNumber].startPosition = players[activePlayerNumber].endPosition;
                 players[activePlayerNumber].startTime = Time.time;
+                board.board.playerPositions[activePlayerNumber] = new Pair<int, int>(players[activePlayerNumber].x, players[activePlayerNumber].y);
                 switch (move.direction)
                 {
                     case EdgeDirection.Up:
                         players[activePlayerNumber].endPosition = new Vector3(move.x - .1f, move.y + 1);
                         players[activePlayerNumber].y += 1;
+                        board.board.playerPositions[activePlayerNumber].y += 1;
                         break;
                     case EdgeDirection.Down:
                         players[activePlayerNumber].endPosition = new Vector3(move.x - .1f, move.y - 1);
                         players[activePlayerNumber].y -= 1;
+                        board.board.playerPositions[activePlayerNumber].y -= 1;
                         break;
                     case EdgeDirection.Left:
                         players[activePlayerNumber].endPosition = new Vector3(move.x - 1.1f, move.y);
                         players[activePlayerNumber].x -= 1;
+                        board.board.playerPositions[activePlayerNumber].x -= 1;
                         break;
                     case EdgeDirection.Right:
                         players[activePlayerNumber].endPosition = new Vector3(move.x + .9f, move.y);
                         players[activePlayerNumber].x += 1;
+                        board.board.playerPositions[activePlayerNumber].x += 1;
                         break;
                 }
                 board.RecolorEdge(move);
-                board.board.playerPositions[move.playerColor] = new Pair<int, int>(players[activePlayerNumber].x, players[activePlayerNumber].y);
             }
             NextTurn();
         }
