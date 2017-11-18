@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 using UnityEngine;
 
-public class Board : MonoBehaviour{
+public class Board : MonoBehaviour, ISerializable{
 
     [Range(1,10)]
     public int width;
@@ -65,5 +66,15 @@ public class Board : MonoBehaviour{
         result.transform.name += i + ", " + j;
         if (direction == EdgeDirection.Down) result.transform.Rotate(Vector3.forward * -90);
         return result;
+    }
+
+    public void GetObjectData(SerializationInfo info, StreamingContext context)
+    {
+        info.AddValue("width", width, typeof(int));
+        info.AddValue("height", height, typeof(int));
+        info.AddValue("playerPositions", playerPositions, typeof(Vector2Int[]));
+        info.AddValue("vertEdges", vertEdges, typeof(Edge[,]));
+        info.AddValue("horzEdges", horzEdges, typeof(Edge[,]));
+        info.AddValue("edge", edge, typeof(Edge));
     }
 }

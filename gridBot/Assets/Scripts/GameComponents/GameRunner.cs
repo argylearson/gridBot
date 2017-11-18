@@ -78,7 +78,8 @@ public class GameRunner : MonoBehaviour {
         {
             players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition, (Time.time - players[i].startTime)*2);
         }
-        var move = players[activePlayerNumber].player.MakeMove(board, timeLimit);
+        var playerBoard = Cloner.Clone(board);
+        var move = players[activePlayerNumber].player.MakeMove(playerBoard, timeLimit);
         if (currentPlayersTime > timeLimit)
         {
             activePlayerNumber = (activePlayerNumber + 1) % playerTypes.Length;
