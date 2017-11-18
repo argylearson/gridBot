@@ -10,7 +10,7 @@ public class KeyboardPlayer : Player
             move = new Move()
             {
                 direction = EdgeDirection.Up,
-                player = this,
+                playerColor = spriteColor,
                 x = x,
                 y = y
             };
@@ -21,7 +21,7 @@ public class KeyboardPlayer : Player
             move = new Move()
             {
                 direction = EdgeDirection.Left,
-                player = this,
+                playerColor = spriteColor,
                 x = x,
                 y = y
             };
@@ -32,7 +32,7 @@ public class KeyboardPlayer : Player
             move = new Move()
             {
                 direction = EdgeDirection.Down,
-                player = this,
+                playerColor = spriteColor,
                 x = x,
                 y = y
             };
@@ -43,7 +43,7 @@ public class KeyboardPlayer : Player
             move = new Move()
             {
                 direction = EdgeDirection.Right,
-                player = this,
+                playerColor = spriteColor,
                 x = x,
                 y = y
             };

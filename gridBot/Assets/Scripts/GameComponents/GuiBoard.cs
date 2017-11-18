@@ -50,17 +50,17 @@ public class GuiBoard : MonoBehaviour
         switch (move.direction)
         {
             case EdgeDirection.Up:
-                vertEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
+                vertEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.playerColor;
                 //TODO board.vertEdges[move.x, move.y].Traversals += 1;
                 return;
             case EdgeDirection.Right:
-                horzEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
+                horzEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.playerColor;
                 return;
             case EdgeDirection.Down:
-                vertEdges[move.x, move.y - 1].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
+                vertEdges[move.x, move.y - 1].GetComponent<SpriteRenderer>().color = move.playerColor;
                 return;
             case EdgeDirection.Left:
-                horzEdges[move.x - 1, move.y].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
+                horzEdges[move.x - 1, move.y].GetComponent<SpriteRenderer>().color = move.playerColor;
                 return;
         }
     }

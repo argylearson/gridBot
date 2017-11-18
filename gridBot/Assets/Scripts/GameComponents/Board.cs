@@ -9,7 +9,9 @@ public class Board{
     [Range(1,10)]
     public int height;
     public Edge edge;
-    public Pair<int>[] playerPositions;
+    public int maxTraversals = 3;
+    public Dictionary<Color,Pair<int, int>> playerPositions;
+    public Dictionary<Color, int> score;
 
     /*represents all of the vertical edges in the board
     uses [x,y] notation to indicate the top vertex of
@@ -31,15 +33,48 @@ public class Board{
     */
 
 
-    public bool IsMoveLegal(Player player, Move move)
+    public bool IsMoveLegal(Move move)
     {
-        throw new NotImplementedException();
+        var result = true;
+        Pair<int, int> targetSpace = null;
+        switch (move.direction)
+        {
+            case EdgeDirection.Down:
+                targetSpace = new Pair<int, int>(move.x, move.y - 1);
+                break;
+            case EdgeDirection.Left:
+                targetSpace = new Pair<int, int>(move.x - 1, move.y);
+                break;
+            case EdgeDirection.Right:
+                targetSpace = new Pair<int, int>(move.x + 1, move.y);
+                break;
+            case EdgeDirection.Up:
+                targetSpace = new Pair<int, int>(move.x, move.y + 1);
+                break;
+        }
+        result &= targetSpace != null && 
+            !playerPositions.ContainsValue(targetSpace) &&
+            (targetSpace.x > 0 || targetSpace.y > 0 || targetSpace.x < width || targetSpace.y < height) &&
+            !MaxTraversals(move);
+        return result;
     }
 
-    public IEnumerable<Move> GetLegalMoves(Player player)
+    public IEnumerable<Move> GetLegalMoves(Color player, int x, int y)
     {
         var result = new List<Move>();
-        throw new NotImplementedException();
+        foreach (EdgeDirection direction in Enum.GetValues(typeof(EdgeDirection)))
+        {
+            var move = new Move
+            {
+                playerColor = player,
+                direction = direction,
+                x = x,
+                y = y
+            };
+            if (IsMoveLegal(move))
+                result.Add(move);
+        }
+        return result;
     }
 
     public Board(int width, int height)
@@ -53,10 +88,12 @@ public class Board{
     public Board DeepCopy()
     {
         var newB = new Board(width, height);
-        newB.playerPositions = new Pair<int>[playerPositions.Length];
-        for(int i = 0; i < playerPositions.Length; i++)
+        newB.playerPositions = new Dictionary<Color, Pair<int, int>>() ;
+        foreach (var position in playerPositions)
         {
-            newB.playerPositions[i] = new Pair<int>(playerPositions[i].x, playerPositions[i].y);
+            var color = new Color(position.Key.r, position.Key.g, position.Key.b);
+            var newPosition = new Pair<int, int>(position.Value.x, position.Value.y);
+            newB.playerPositions.Add(color, newPosition);
         }
         newB.vertEdges = new Edge[width + 1, height];
         newB.horzEdges = new Edge[width, height + 1];
@@ -72,5 +109,32 @@ public class Board{
         }
 
         return newB;
+    }
+
+    private bool MaxTraversals(Move move)
+    {
+        Pair<int, int> targetSpace = null;
+        Edge[,] edges = null;
+        switch (move.direction)
+        {
+            case EdgeDirection.Down:
+                targetSpace = new Pair<int, int>(move.x, move.y - 1);
+                edges = vertEdges;
+                break;
+            case EdgeDirection.Left:
+                targetSpace = new Pair<int, int>(move.x - 1, move.y);
+                edges = horzEdges;
+                break;
+            case EdgeDirection.Right:
+                targetSpace = new Pair<int, int>(move.x + 1, move.y);
+                edges = horzEdges;
+                break;
+            case EdgeDirection.Up:
+                targetSpace = new Pair<int, int>(move.x, move.y + 1);
+                edges = vertEdges;
+                break;
+        }
+        return edges == null ||
+            edges[targetSpace.x, targetSpace.y].traversals >= maxTraversals;
     }
 }

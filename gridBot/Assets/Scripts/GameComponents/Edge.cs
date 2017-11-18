@@ -4,15 +4,9 @@ public class Edge {
 
     #region fields and properties
     public Color playerColor;
-    private SpriteRenderer sprite;
     public readonly int x;
     public readonly int y;
-    private int _traversals;
-
-    public int Traversals
-    {
-        get { return _traversals; }
-    }
+    public int traversals;
     #endregion
 
     #region constructors
