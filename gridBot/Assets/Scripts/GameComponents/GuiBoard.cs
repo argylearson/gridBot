@@ -47,21 +47,22 @@ public class GuiBoard : MonoBehaviour
 
     public void RecolorEdge(Move move)
     {
+        var color = new Color(move.playerColor.r, move.playerColor.g, move.playerColor.b);
         switch (move.direction)
         {
             case EdgeDirection.Up:
-                vertEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.playerColor;
+                vertEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = color;
                 //TODO board.vertEdges[move.x, move.y].Traversals += 1;
-                return;
+                break;
             case EdgeDirection.Right:
-                horzEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.playerColor;
-                return;
+                horzEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = color;
+                break;
             case EdgeDirection.Down:
-                vertEdges[move.x, move.y - 1].GetComponent<SpriteRenderer>().color = move.playerColor;
-                return;
+                vertEdges[move.x, move.y - 1].GetComponent<SpriteRenderer>().color = color;
+                break;
             case EdgeDirection.Left:
-                horzEdges[move.x - 1, move.y].GetComponent<SpriteRenderer>().color = move.playerColor;
-                return;
+                horzEdges[move.x - 1, move.y].GetComponent<SpriteRenderer>().color = color;
+                break;
         }
     }
 }
