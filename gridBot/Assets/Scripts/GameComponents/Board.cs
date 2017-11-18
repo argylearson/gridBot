@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Serialization;
 using UnityEngine;
 
-public class Board : MonoBehaviour, ISerializable{
+public class Board{
 
     [Range(1,10)]
     public int width;
     [Range(1,10)]
     public int height;
     public Edge edge;
-    public Vector2Int[] playerPositions;
+    public Pair<int>[] playerPositions;
 
     /*represents all of the vertical edges in the board
     uses [x,y] notation to indicate the top vertex of
@@ -43,38 +42,35 @@ public class Board : MonoBehaviour, ISerializable{
         throw new NotImplementedException();
     }
 
-    private void Awake()
+    public Board(int width, int height)
     {
+        this.width = width;
+        this.height = height;
         vertEdges = new Edge[width + 1, height];
         horzEdges = new Edge[width, height + 1];
+    }
 
+    public Board DeepCopy()
+    {
+        var newB = new Board(width, height);
+        newB.playerPositions = new Pair<int>[playerPositions.Length];
+        for(int i = 0; i < playerPositions.Length; i++)
+        {
+            newB.playerPositions[i] = new Pair<int>(playerPositions[i].x, playerPositions[i].y);
+        }
+        newB.vertEdges = new Edge[width + 1, height];
+        newB.horzEdges = new Edge[width, height + 1];
         for (int i = 0; i <= width; i++)
         {
             for (int j = 0; j <= height; j++)
             {
-                if (i != width) horzEdges[i, j] = CreateEdge(i, j, EdgeDirection.Right);
-                if (j != height) vertEdges[i, j] = CreateEdge(i, j, EdgeDirection.Down);
+                if (i != width)
+                    newB.horzEdges[i, j] = new Edge(i, j, horzEdges[i, j].playerColor);
+                if (j != height)
+                    newB.vertEdges[i, j] = new Edge(i, j, vertEdges[i, j].playerColor);
             }
         }
-    }
 
-    private Edge CreateEdge(int i, int j, EdgeDirection direction)
-    {
-        var position = direction == EdgeDirection.Right ? new Vector3(i + .4f, j, 0) : new Vector3(i - .1f, j + .5f, 0);
-        var result = Instantiate(edge, position, Quaternion.identity, this.transform);
-        result.transform.name = direction == EdgeDirection.Right ? "horz: " : "vert: ";
-        result.transform.name += i + ", " + j;
-        if (direction == EdgeDirection.Down) result.transform.Rotate(Vector3.forward * -90);
-        return result;
-    }
-
-    public void GetObjectData(SerializationInfo info, StreamingContext context)
-    {
-        info.AddValue("width", width, typeof(int));
-        info.AddValue("height", height, typeof(int));
-        info.AddValue("playerPositions", playerPositions, typeof(Vector2Int[]));
-        info.AddValue("vertEdges", vertEdges, typeof(Edge[,]));
-        info.AddValue("horzEdges", horzEdges, typeof(Edge[,]));
-        info.AddValue("edge", edge, typeof(Edge));
+        return newB;
     }
 }

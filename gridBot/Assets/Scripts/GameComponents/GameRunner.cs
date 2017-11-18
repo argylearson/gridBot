@@ -6,7 +6,8 @@ using System;
 public class GameRunner : MonoBehaviour {
     
     [SerializeField]
-    private Board board;
+    private GuiBoard board;
+    private Board playerBoard;
     private List<PlayerState> players;
     [SerializeField]
     private PlayerType[] playerTypes;
@@ -24,7 +25,7 @@ public class GameRunner : MonoBehaviour {
     private void Awake()
     {
         players = new List<PlayerState>();
-        board.playerPositions = new Vector2Int[playerTypes.Length];
+        board.board.playerPositions = new Pair<int>[playerTypes.Length];
         for (int i = 0; i < playerTypes.Length; i++)
         {
             var state = new PlayerState();
@@ -32,10 +33,11 @@ public class GameRunner : MonoBehaviour {
             {
                 case (PlayerType.Keyboard):
                     CreatePlayer(state, typeof(KeyboardPlayer), i);
-                    board.playerPositions[i] = new Vector2Int(players[i].x, players[i].y);
+                    board.board.playerPositions[i] = new Pair<int>(players[i].x, players[i].y);
                     break;
             }
         }
+        playerBoard = board.board.DeepCopy();
     }
 
     private void CreatePlayer(PlayerState state, Type type, int playerNumber)
@@ -52,25 +54,6 @@ public class GameRunner : MonoBehaviour {
         state.player.UpdateColor(color);
         player.transform.parent = this.transform;
     }
-    private void RecolorEdge(Move move)
-    {
-        switch (move.direction)
-        {
-            case EdgeDirection.Up:
-                board.vertEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
-                //TODO board.vertEdges[move.x, move.y].Traversals += 1;
-                return;
-            case EdgeDirection.Right:
-                board.horzEdges[move.x, move.y].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
-                return;
-            case EdgeDirection.Down:
-                board.vertEdges[move.x, move.y - 1].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
-                return;
-            case EdgeDirection.Left:
-                board.horzEdges[move.x - 1, move.y].GetComponent<SpriteRenderer>().color = move.player.spriteColor;
-                return;
-        }
-    }
 
     private void Update()
     {
@@ -78,7 +61,6 @@ public class GameRunner : MonoBehaviour {
         {
             players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition, (Time.time - players[i].startTime)*2);
         }
-        var playerBoard = Cloner.Clone(board);
         var move = players[activePlayerNumber].player.MakeMove(playerBoard, timeLimit);
         if (currentPlayersTime > timeLimit)
         {
@@ -104,8 +86,9 @@ public class GameRunner : MonoBehaviour {
                     players[activePlayerNumber].endPosition = new Vector3(move.x + .9f, move.y);
                     break;
             }
-            RecolorEdge(move);
+            board.RecolorEdge(move);
             activePlayerNumber = (activePlayerNumber + 1) % playerTypes.Length;
+            playerBoard = board.board.DeepCopy();
             currentPlayersTime = 0;
         }
         currentPlayersTime += Time.deltaTime;
