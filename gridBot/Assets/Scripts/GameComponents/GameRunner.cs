@@ -28,6 +28,7 @@ public class GameRunner : MonoBehaviour {
     {
         players = new List<PlayerState>();
         board.board.playerPositions = new Pair<int, int>[playerTypes.Length];
+        board.board.score = new Pair<Color, int>[playerTypes.Length];
         for (int i = 0; i < playerTypes.Length; i++)
         {
             var state = new PlayerState();
@@ -36,6 +37,7 @@ public class GameRunner : MonoBehaviour {
                 case (PlayerType.Keyboard):
                     CreatePlayer(state, typeof(KeyboardPlayer), i);
                     board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
+                    board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
                     break;
             }
         }
@@ -49,6 +51,7 @@ public class GameRunner : MonoBehaviour {
         state.x = 0;
         state.y = 0;
         state.startPosition = new Vector3(-.1f, 0);
+        state.player.transform.position = state.startPosition;
         state.endPosition = state.startPosition;
         players.Add(state);
         player.AddComponent<SpriteRenderer>().sprite = playerSprite;

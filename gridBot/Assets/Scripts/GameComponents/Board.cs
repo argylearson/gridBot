@@ -11,7 +11,7 @@ public class Board{
     public Edge edge;
     public int maxTraversals = 3;
     public Pair<int, int>[] playerPositions;
-    public Dictionary<Color, int> score;
+    public Pair<Color, int>[] score;
 
     /*represents all of the vertical edges in the board
     uses [x,y] notation to indicate the top vertex of
@@ -56,7 +56,6 @@ public class Board{
             !SpaceOccupied(targetSpace) &&
             (targetSpace.x >= 0 && targetSpace.y >= 0 && targetSpace.x <= width && targetSpace.y <= height) &&
             !MaxTraversals(move);
-        Debug.Log("is move legal: " + result);
         return result;
     }
 
