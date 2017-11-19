@@ -2,14 +2,16 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Board : MonoBehaviour{
+public class Board{
 
     [Range(1,10)]
     public int width;
     [Range(1,10)]
     public int height;
     public Edge edge;
-    public Vector2Int[] playerPositions;
+    public int maxTraversals = 3;
+    public Pair<int, int>[] playerPositions;
+    public Pair<Color, int>[] score;
 
     /*represents all of the vertical edges in the board
     uses [x,y] notation to indicate the top vertex of
@@ -31,39 +33,118 @@ public class Board : MonoBehaviour{
     */
 
 
-    public bool IsMoveLegal(Player player, Move move)
+    public bool IsMoveLegal(Move move)
     {
-        throw new NotImplementedException();
+        var result = true;
+        Pair<int, int> targetSpace = null;
+        switch (move.direction)
+        {
+            case EdgeDirection.Down:
+                targetSpace = new Pair<int, int>(move.x, move.y - 1);
+                break;
+            case EdgeDirection.Left:
+                targetSpace = new Pair<int, int>(move.x - 1, move.y);
+                break;
+            case EdgeDirection.Right:
+                targetSpace = new Pair<int, int>(move.x + 1, move.y);
+                break;
+            case EdgeDirection.Up:
+                targetSpace = new Pair<int, int>(move.x, move.y + 1);
+                break;
+        }
+        result &= targetSpace != null && 
+            !SpaceOccupied(targetSpace) &&
+            (targetSpace.x >= 0 && targetSpace.y >= 0 && targetSpace.x <= width && targetSpace.y <= height) &&
+            !MaxTraversals(move);
+        return result;
     }
 
-    public IEnumerable<Move> GetLegalMoves(Player player)
+    public IEnumerable<Move> GetLegalMoves(Color player, int x, int y)
     {
         var result = new List<Move>();
-        throw new NotImplementedException();
+        foreach (EdgeDirection direction in Enum.GetValues(typeof(EdgeDirection)))
+        {
+            var move = new Move
+            {
+                playerColor = player,
+                direction = direction,
+                x = x,
+                y = y
+            };
+            if (IsMoveLegal(move))
+                result.Add(move);
+        }
+        return result;
     }
 
-    private void Awake()
+    public Board(int width, int height)
     {
+        this.width = width;
+        this.height = height;
         vertEdges = new Edge[width + 1, height];
         horzEdges = new Edge[width, height + 1];
+    }
 
+    public Board DeepCopy()
+    {
+        var newB = new Board(width, height);
+        newB.playerPositions = new Pair<int, int>[playerPositions.Length] ;
+        for (int i = 0; i < playerPositions.Length; i++)
+        {
+            var newPosition = new Pair<int, int>(playerPositions[i].x, playerPositions[i].y);
+            newB.playerPositions[i] = newPosition;
+        }
+        newB.vertEdges = new Edge[width + 1, height];
+        newB.horzEdges = new Edge[width, height + 1];
         for (int i = 0; i <= width; i++)
         {
             for (int j = 0; j <= height; j++)
             {
-                if (i != width) horzEdges[i, j] = CreateEdge(i, j, EdgeDirection.Right);
-                if (j != height) vertEdges[i, j] = CreateEdge(i, j, EdgeDirection.Down);
+                if (i != width)
+                    newB.horzEdges[i, j] = new Edge(i, j, horzEdges[i, j].playerColor);
+                if (j != height)
+                    newB.vertEdges[i, j] = new Edge(i, j, vertEdges[i, j].playerColor);
             }
         }
+
+        return newB;
     }
 
-    private Edge CreateEdge(int i, int j, EdgeDirection direction)
+    private bool SpaceOccupied(Pair<int, int> targetSpace)
     {
-        var position = direction == EdgeDirection.Right ? new Vector3(i + .4f, j, 0) : new Vector3(i - .1f, j + .5f, 0);
-        var result = Instantiate(edge, position, Quaternion.identity, this.transform);
-        result.transform.name = direction == EdgeDirection.Right ? "horz: " : "vert: ";
-        result.transform.name += i + ", " + j;
-        if (direction == EdgeDirection.Down) result.transform.Rotate(Vector3.forward * -90);
+        var result = false;
+        for (int i = 0; i < playerPositions.Length; i++)
+        {
+            result |= (targetSpace.x == playerPositions[i].x &&
+                       targetSpace.y == playerPositions[i].y);
+        }
         return result;
+    }
+
+    private bool MaxTraversals(Move move)
+    {
+        Pair<int, int> targetSpace = null;
+        Edge[,] edges = null;
+        switch (move.direction)
+        {
+            case EdgeDirection.Down:
+                targetSpace = new Pair<int, int>(move.x, move.y - 1);
+                edges = vertEdges;
+                break;
+            case EdgeDirection.Left:
+                targetSpace = new Pair<int, int>(move.x - 1, move.y);
+                edges = horzEdges;
+                break;
+            case EdgeDirection.Right:
+                targetSpace = new Pair<int, int>(move.x, move.y);
+                edges = horzEdges;
+                break;
+            case EdgeDirection.Up:
+                targetSpace = new Pair<int, int>(move.x, move.y);
+                edges = vertEdges;
+                break;
+        }
+        return edges == null ||
+            edges[targetSpace.x, targetSpace.y].traversals >= maxTraversals;
     }
 }
