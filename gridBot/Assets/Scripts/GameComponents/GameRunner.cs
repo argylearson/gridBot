@@ -39,6 +39,11 @@ public class GameRunner : MonoBehaviour {
                     board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
                     board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
                     break;
+                case (PlayerType.Random):
+                    CreatePlayer(state, typeof(RandomPlayer), i);
+                    board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
+                    board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
+                    break;
             }
         }
         playerBoard = board.board.DeepCopy();
@@ -47,7 +52,10 @@ public class GameRunner : MonoBehaviour {
     private void CreatePlayer(PlayerState state, Type type, int playerNumber)
     {
         var player = new GameObject("player " + playerNumber);
-        state.player = player.AddComponent<KeyboardPlayer>();
+        if (type == typeof(KeyboardPlayer))
+            state.player = player.AddComponent<KeyboardPlayer>();
+        else if (type == typeof(RandomPlayer))
+            state.player = player.AddComponent<RandomPlayer>();
         state.x = 0;
         state.y = 0;
         state.startPosition = new Vector3(-.1f, 0);
@@ -70,13 +78,13 @@ public class GameRunner : MonoBehaviour {
 
     private void Update()
     {
+        for (int i = 0; i < playerTypes.Length; i++)
+        {
+            players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition,
+                (Time.time - players[i].startTime) * 2);
+        }
         if (numberOfTurns > 0)
         {
-            for (int i = 0; i < playerTypes.Length; i++)
-            {
-                players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition,
-                    (Time.time - players[i].startTime) * 2);
-            }
             if (currentPlayersTime > timeLimit)
             {
                 NextTurn();
