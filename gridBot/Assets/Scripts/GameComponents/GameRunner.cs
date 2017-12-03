@@ -49,7 +49,7 @@ public class GameRunner : MonoBehaviour {
         board.scores = new string[playerTypes.Length];
         startPairs = new Pair<int, int>[]
         {
-            new Pair<int, int>(0, 0),
+            new Pair<int, int>(1, 1),
             new Pair<int, int>(board.width, board.height),
             new Pair<int, int>(0, board.height),
             new Pair<int, int>(board.width, 0) 
@@ -118,8 +118,7 @@ public class GameRunner : MonoBehaviour {
                 NextTurn();
             }
             var move = players[activePlayerNumber].player.MakeMove(playerBoard, timeLimit);
-            if (move != null)
-            {
+            if (move != null) {
                 move.x = players[activePlayerNumber].x;
                 move.y = players[activePlayerNumber].y;
                 move.playerColor = playerColors[activePlayerNumber];

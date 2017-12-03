@@ -85,6 +85,19 @@ public class Board{
         horzEdges = new Edge[width, height + 1];
     }
 
+    public int TryGetPlayerIndex(Color color)
+    {
+        var index = -1;
+        var i = 0;
+        while (index < 0 && i < score.Length)
+        {
+            if (ColorUtil.SameColor(color, score[i].x))
+                index = i;
+            i++;
+        }
+        return index;
+    }
+
     public Board DeepCopy()
     {
         var newB = new Board(width, height);
