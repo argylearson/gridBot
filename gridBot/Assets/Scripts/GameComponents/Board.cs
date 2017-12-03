@@ -9,7 +9,7 @@ public class Board{
     [Range(1,10)]
     public int height;
     public Edge edge;
-    public int maxTraversals = 3;
+    public readonly int maxTraversals = 3;
     public Pair<int, int>[] playerPositions;
     public Pair<Color, int>[] score;
 

@@ -2,6 +2,8 @@
 using Assets.Scripts.Enums;
 using UnityEngine;
 using System;
+using UnityEditor.Experimental.Build.Player;
+using UnityEditorInternal;
 
 public class GameRunner : MonoBehaviour {
     
@@ -23,20 +25,46 @@ public class GameRunner : MonoBehaviour {
     private float currentPlayersTime;
     [SerializeField]
     private int numberOfTurns;
+    private Pair<int, int>[] startPairs;
+    private string winnerString;
+    private bool winnerChosen = false;
+    private GUIStyle winnerStyle = new GUIStyle();
+
+    private void OnGUI()
+    {
+        for (int i = 0; i < board.scores.Length; i++)
+        {
+            var style = new GUIStyle();
+            style.normal.textColor = playerColors[i];
+            GUI.Label(new Rect(10, 20 * (i + 1), 30, 30), board.scores[i], style);
+        }
+        GUI.Label(new Rect(Screen.width/2, 10, 50, 50), numberOfTurns.ToString());
+        GUI.Label(new Rect(Screen.width / 2, 40, 50, 50), winnerString, winnerStyle);
+    }
 
     private void Awake()
     {
+        winnerString = "";
         players = new List<PlayerState>();
+        board.scores = new string[playerTypes.Length];
+        startPairs = new Pair<int, int>[]
+        {
+            new Pair<int, int>(0, 0),
+            new Pair<int, int>(board.width, board.height),
+            new Pair<int, int>(0, board.height),
+            new Pair<int, int>(board.width, 0) 
+        };
         board.board.playerPositions = new Pair<int, int>[playerTypes.Length];
         board.board.score = new Pair<Color, int>[playerTypes.Length];
         for (int i = 0; i < playerTypes.Length; i++)
         {
+            board.scores[i] = "0";
             var state = new PlayerState();
             switch (playerTypes[i])
             {
                 case (PlayerType.Keyboard):
                     CreatePlayer(state, typeof(KeyboardPlayer), i);
-                    board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
+                    board.board.playerPositions[i] = startPairs[i];
                     board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
                     break;
                 case (PlayerType.Random):
@@ -56,9 +84,9 @@ public class GameRunner : MonoBehaviour {
             state.player = player.AddComponent<KeyboardPlayer>();
         else if (type == typeof(RandomPlayer))
             state.player = player.AddComponent<RandomPlayer>();
-        state.x = 0;
-        state.y = 0;
-        state.startPosition = new Vector3(-.1f, 0);
+        state.x = startPairs[playerNumber].x;
+        state.y = startPairs[playerNumber].y;
+        state.startPosition = new Vector3(state.x -.1f, state.y);
         state.player.transform.position = state.startPosition;
         state.endPosition = state.startPosition;
         players.Add(state);
@@ -129,6 +157,30 @@ public class GameRunner : MonoBehaviour {
                 NextTurn();
             }
             currentPlayersTime += Time.deltaTime;
+        }
+        else if (!winnerChosen)
+        {
+            int winner = -1;
+            int currentMax = -1;
+            for (int i = 0; i < players.Count; i++)
+            {
+                if (board.board.score[i].y > currentMax)
+                {
+                    winner = i;
+                    currentMax = board.board.score[i].y;
+                }
+                else if (board.board.score[i].y == currentMax)
+                    winner = -1;
+            }
+            if (winner < 0)
+                winnerString = "TIE GAME";
+            else
+            {
+                winnerStyle.normal.textColor = board.board.score[winner].x;
+                winnerStyle.fontSize = 32;
+                winnerString = "Player " + winner + " wins!";
+            }
+            winnerChosen = true;
         }
     }
 }
