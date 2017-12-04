@@ -234,8 +234,9 @@
     <Compile Include="Assets\Scripts\Players\Heuristics\IHeuristic.cs" />
     <Compile Include="Assets\Scripts\Players\Heuristics\MaxScoreHeuristic.cs" />
     <Compile Include="Assets\Scripts\Players\KeyboardPlayer.cs" />
+    <Compile Include="Assets\Scripts\Players\MaxScorePlayer.cs" />
     <Compile Include="Assets\Scripts\Players\RandomPlayer.cs" />
-    <Compile Include="Assets\Scripts\Players\SimpleMaxScore.cs" />
+    <Compile Include="Assets\Scripts\Players\SimpleMaxScorePlayer.cs" />
     <Compile Include="Assets\Scripts\Utilities\ColorUtil.cs" />
     <Compile Include="Assets\Scripts\Utilities\Pair.cs" />
   </ItemGroup>

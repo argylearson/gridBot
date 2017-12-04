@@ -2,6 +2,7 @@
 using Assets.Scripts.Enums;
 using UnityEngine;
 using System;
+using System.Linq;
 using UnityEditor.Experimental.Build.Player;
 using UnityEditorInternal;
 
@@ -69,7 +70,10 @@ public class GameRunner : MonoBehaviour {
                     CreatePlayer(state, typeof(RandomPlayer), i);
                     break;
                 case (PlayerType.SimpleMaxScore):
-                    CreatePlayer(state, typeof(SimpleMaxScore), i);
+                    CreatePlayer(state, typeof(SimpleMaxScorePlayer), i);
+                    break;
+                case (PlayerType.MaxScore):
+                    CreatePlayer(state, typeof(MaxScorePlayer), i);
                     break;
             }
             board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
@@ -85,8 +89,10 @@ public class GameRunner : MonoBehaviour {
             state.player = player.AddComponent<KeyboardPlayer>();
         else if (type == typeof(RandomPlayer))
             state.player = player.AddComponent<RandomPlayer>();
-        else if (type == typeof(SimpleMaxScore))
-            state.player = player.AddComponent<SimpleMaxScore>();
+        else if (type == typeof(SimpleMaxScorePlayer))
+            state.player = player.AddComponent<SimpleMaxScorePlayer>();
+        else if (type == typeof(MaxScorePlayer))
+            state.player = player.AddComponent<MaxScorePlayer>();
         state.x = startPairs[playerNumber].x;
         state.y = startPairs[playerNumber].y;
         state.startPosition = new Vector3(state.x -.1f, state.y);
@@ -116,12 +122,15 @@ public class GameRunner : MonoBehaviour {
         }
         if (numberOfTurns > 0)
         {
-            if (currentPlayersTime > timeLimit)
+            var moves = playerBoard.GetLegalMoves(playerColors[activePlayerNumber], players[activePlayerNumber].x, players[activePlayerNumber].y);
+            Move move = null;
+            if (moves.Any())
+                move = players[activePlayerNumber].player.MakeMove(playerBoard, timeLimit);
+            if (currentPlayersTime > timeLimit || !moves.Any())
             {
                 NextTurn();
             }
-            var move = players[activePlayerNumber].player.MakeMove(playerBoard, timeLimit);
-            if (move != null) {
+            else if (move != null) {
                 move.x = players[activePlayerNumber].x;
                 move.y = players[activePlayerNumber].y;
                 move.playerColor = playerColors[activePlayerNumber];

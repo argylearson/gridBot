@@ -4,6 +4,7 @@
     {
         Keyboard,
         Random,
-        SimpleMaxScore
+        SimpleMaxScore,
+        MaxScore
     }
 }

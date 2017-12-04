@@ -2,5 +2,5 @@
 
 interface IHeuristic
 {
-    Move BestMove(Board board, Color color);
+    int MoveScore(Board board, Move move);
 }
