@@ -49,7 +49,7 @@ public class GameRunner : MonoBehaviour {
         board.scores = new string[playerTypes.Length];
         startPairs = new Pair<int, int>[]
         {
-            new Pair<int, int>(1, 1),
+            new Pair<int, int>(0, 0),
             new Pair<int, int>(board.width, board.height),
             new Pair<int, int>(0, board.height),
             new Pair<int, int>(board.width, 0) 
@@ -64,15 +64,16 @@ public class GameRunner : MonoBehaviour {
             {
                 case (PlayerType.Keyboard):
                     CreatePlayer(state, typeof(KeyboardPlayer), i);
-                    board.board.playerPositions[i] = startPairs[i];
-                    board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
                     break;
                 case (PlayerType.Random):
                     CreatePlayer(state, typeof(RandomPlayer), i);
-                    board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
-                    board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
+                    break;
+                case (PlayerType.SimpleMaxScore):
+                    CreatePlayer(state, typeof(SimpleMaxScore), i);
                     break;
             }
+            board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
+            board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
         }
         playerBoard = board.board.DeepCopy();
     }
@@ -84,6 +85,8 @@ public class GameRunner : MonoBehaviour {
             state.player = player.AddComponent<KeyboardPlayer>();
         else if (type == typeof(RandomPlayer))
             state.player = player.AddComponent<RandomPlayer>();
+        else if (type == typeof(SimpleMaxScore))
+            state.player = player.AddComponent<SimpleMaxScore>();
         state.x = startPairs[playerNumber].x;
         state.y = startPairs[playerNumber].y;
         state.startPosition = new Vector3(state.x -.1f, state.y);

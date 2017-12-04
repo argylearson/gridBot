@@ -3,6 +3,7 @@
     public enum PlayerType
     {
         Keyboard,
-        Random
+        Random,
+        SimpleMaxScore
     }
 }

@@ -102,10 +102,12 @@ public class Board{
     {
         var newB = new Board(width, height);
         newB.playerPositions = new Pair<int, int>[playerPositions.Length] ;
+        newB.score = new Pair<Color, int>[score.Length];
         for (int i = 0; i < playerPositions.Length; i++)
         {
             var newPosition = new Pair<int, int>(playerPositions[i].x, playerPositions[i].y);
             newB.playerPositions[i] = newPosition;
+            newB.score[i] = new Pair<Color, int>(score[i].x, score[i].y);
         }
         newB.vertEdges = new Edge[width + 1, height];
         newB.horzEdges = new Edge[width, height + 1];
@@ -114,9 +116,15 @@ public class Board{
             for (int j = 0; j <= height; j++)
             {
                 if (i != width)
+                {
                     newB.horzEdges[i, j] = new Edge(i, j, horzEdges[i, j].playerColor);
+                    newB.horzEdges[i, j].traversals = horzEdges[i, j].traversals;
+                }
                 if (j != height)
+                {
                     newB.vertEdges[i, j] = new Edge(i, j, vertEdges[i, j].playerColor);
+                    newB.vertEdges[i, j].traversals = vertEdges[i, j].traversals;
+                }
             }
         }
 
