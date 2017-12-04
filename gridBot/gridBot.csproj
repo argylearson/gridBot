@@ -231,10 +231,16 @@
     <Compile Include="Assets\Scripts\GameComponents\Move.cs" />
     <Compile Include="Assets\Scripts\GameComponents\PlayerState.cs" />
     <Compile Include="Assets\Scripts\Interfaces\Player.cs" />
+    <Compile Include="Assets\Scripts\Players\Heuristics\IHeuristic.cs" />
+    <Compile Include="Assets\Scripts\Players\Heuristics\MaxScoreHeuristic.cs" />
     <Compile Include="Assets\Scripts\Players\KeyboardPlayer.cs" />
+    <Compile Include="Assets\Scripts\Players\MaxScorePlayer.cs" />
+    <Compile Include="Assets\Scripts\Players\RandomPlayer.cs" />
+    <Compile Include="Assets\Scripts\Players\SimpleMaxScorePlayer.cs" />
     <Compile Include="Assets\Scripts\Utilities\ColorUtil.cs" />
     <Compile Include="Assets\Scripts\Utilities\Pair.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />
 </Project>
