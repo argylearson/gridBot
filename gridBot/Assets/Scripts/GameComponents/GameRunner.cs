@@ -202,7 +202,11 @@ public class GameRunner : MonoBehaviour {
     private void SaveCsv(int winner, int score)
     {
         string path = @"/Saved_data.csv";
-        string data =  score + ", " + playerTypes[winner] + ", " + score;
+        string data;
+        if (winner < 0)
+            data = "-1, tie, 0";
+        else
+            data = score + ", " + playerTypes[winner] + ", " + score;
 
         if (!File.Exists(path))
         {
