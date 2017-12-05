@@ -3,7 +3,7 @@
 public class MaxScorePlayer : Player
 {
     private IHeuristic heuristic = new MaxScoreHeuristic();
-    private int maxDepth = 0;
+    private int maxDepth = 2;
     private int myIndex;
     private int[] scores;
 

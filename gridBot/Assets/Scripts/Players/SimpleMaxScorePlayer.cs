@@ -14,6 +14,7 @@
             var score = heuristic.Score(clone, i);
             if (score > bestScore)
             {
+                bestScore = score;
                 bestMove = move;
             }
         }
