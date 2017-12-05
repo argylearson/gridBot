@@ -3,7 +3,7 @@
 public class MaxScorePlayer : Player
 {
     private IHeuristic heuristic = new MaxScoreHeuristic();
-    private int maxDepth = 2;
+    private int maxDepth = 4;
     private int myIndex;
     private int[] scores;
 
@@ -46,6 +46,7 @@ public class MaxScorePlayer : Player
                 {
                     var clone = board.DeepCopy();
                     clone.MakeMove(move);
+                    clone.AdjustPosition(playerIndex, move.direction);
                     int score;
                     BestMove(clone, (playerIndex + 1) % board.score.Length, depth + 1, out score);
                     if (score > maxScore)

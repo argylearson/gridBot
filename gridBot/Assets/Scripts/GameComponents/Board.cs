@@ -161,6 +161,25 @@ public class Board{
         }
     }
 
+    public void AdjustPosition(int player, EdgeDirection dir)
+    {
+        switch (dir)
+        {
+            case EdgeDirection.Up:
+                playerPositions[player].y += 1;
+                break;
+            case EdgeDirection.Right:
+                playerPositions[player].x += 1;
+                break;
+            case EdgeDirection.Down:
+                playerPositions[player].y -= 1;
+                break;
+            case EdgeDirection.Left:
+                playerPositions[player].x -= 1;
+                break;
+        }
+    }
+
     private bool SpaceOccupied(Pair<int, int> targetSpace)
     {
         var result = false;
