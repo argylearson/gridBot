@@ -2,9 +2,11 @@
 using Assets.Scripts.Enums;
 using UnityEngine;
 using System;
+using System.IO;
 using System.Linq;
 using UnityEditor.Experimental.Build.Player;
 using UnityEditorInternal;
+using UnityEngine.SceneManagement;
 
 public class GameRunner : MonoBehaviour {
     
@@ -39,7 +41,7 @@ public class GameRunner : MonoBehaviour {
             style.normal.textColor = playerColors[i];
             GUI.Label(new Rect(10, 20 * (i + 1), 30, 30), board.scores[i], style);
         }
-        GUI.Label(new Rect(Screen.width/2, 10, 50, 50), numberOfTurns.ToString());
+        GUI.Label(new Rect(Screen.width / 2, 10, 50, 50), numberOfTurns.ToString());
         GUI.Label(new Rect(Screen.width / 2, 40, 50, 50), winnerString, winnerStyle);
     }
 
@@ -192,6 +194,22 @@ public class GameRunner : MonoBehaviour {
                 winnerString = "Player " + winner + " wins!";
             }
             winnerChosen = true;
+            SaveCsv(winner, currentMax);
+            SceneManager.LoadScene(0);
         }
+    }
+
+    private void SaveCsv(int winner, int score)
+    {
+        string path = @"/Saved_data.csv";
+        string data =  score + ", " + playerTypes[winner] + ", " + score;
+
+        if (!File.Exists(path))
+        {
+            File.Create(path);
+        }
+        TextWriter tw = new StreamWriter(path, true);
+        tw.WriteLine(data);
+        tw.Close();
     }
 }
