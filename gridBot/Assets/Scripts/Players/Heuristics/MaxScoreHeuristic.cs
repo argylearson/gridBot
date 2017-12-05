@@ -1,9 +1,7 @@
 ﻿class MaxScoreHeuristic : IHeuristic
 {
-    public int MoveScore(Board board, Move move)
+    public int Score(Board board, int playerIndex)
     {
-        board.MakeMove(move);
-        var index = board.TryGetPlayerIndex(move.playerColor);
-        return board.score[index].y;
+        return board.score[playerIndex].y;
     }
 }

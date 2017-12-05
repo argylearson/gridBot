@@ -2,5 +2,5 @@
 
 interface IHeuristic
 {
-    int MoveScore(Board board, Move move);
+    int Score(Board board, int playerIndex);
 }

@@ -9,9 +9,12 @@
         int i = board.TryGetPlayerIndex(spriteColor);
         foreach (var move in board.GetLegalMoves(spriteColor, board.playerPositions[i].x, board.playerPositions[i].y))
         {
-            var score = heuristic.MoveScore(board.DeepCopy(), move);
+            var clone = board.DeepCopy();
+            clone.MakeMove(move);
+            var score = heuristic.Score(clone, i);
             if (score > bestScore)
             {
+                bestScore = score;
                 bestMove = move;
             }
         }

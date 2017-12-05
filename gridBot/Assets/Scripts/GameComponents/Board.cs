@@ -9,7 +9,7 @@ public class Board{
     [Range(1,10)]
     public int height;
     public Edge edge;
-    public readonly int maxTraversals = 3;
+    public int maxTraversals = 3;
     public Pair<int, int>[] playerPositions;
     public Pair<Color, int>[] score;
 
@@ -101,6 +101,8 @@ public class Board{
     public Board DeepCopy()
     {
         var newB = new Board(width, height);
+        newB.maxTraversals = maxTraversals;
+        newB.edge = edge;
         newB.playerPositions = new Pair<int, int>[playerPositions.Length] ;
         newB.score = new Pair<Color, int>[score.Length];
         for (int i = 0; i < playerPositions.Length; i++)
@@ -155,6 +157,25 @@ public class Board{
                 UpdateScore(horzEdges[move.x - 1, move.y], color, move.direction);
                 horzEdges[move.x - 1, move.y].traversals += 1;
                 horzEdges[move.x - 1, move.y].playerColor = color;
+                break;
+        }
+    }
+
+    public void AdjustPosition(int player, EdgeDirection dir)
+    {
+        switch (dir)
+        {
+            case EdgeDirection.Up:
+                playerPositions[player].y += 1;
+                break;
+            case EdgeDirection.Right:
+                playerPositions[player].x += 1;
+                break;
+            case EdgeDirection.Down:
+                playerPositions[player].y -= 1;
+                break;
+            case EdgeDirection.Left:
+                playerPositions[player].x -= 1;
                 break;
         }
     }
