@@ -37,10 +37,13 @@ public class GameRunner : MonoBehaviour {
         {
             var style = new GUIStyle();
             style.normal.textColor = playerColors[i];
-            GUI.Label(new Rect(10, 20 * (i + 1), 30, 30), board.scores[i], style);
+            GUI.Label(new Rect(10, 20 * (i + 2), 30, 30), board.scores[i], style);
         }
-        GUI.Label(new Rect(Screen.width / 2, 10, 50, 50), numberOfTurns.ToString());
+        GUI.Label(new Rect(Screen.width / 2, 10, 200, 50), "Turns Remaining: " + numberOfTurns.ToString());
         GUI.Label(new Rect(Screen.width / 2, 40, 50, 50), winnerString, winnerStyle);
+
+        GUI.Label(new Rect(10, 20, 200, 50), "Current Player: " + (activePlayerNumber + 1));
+        GUI.Label(new Rect(10, 0, 200, 50), "Time Remaining: " + currentPlayersTime);
     }
 
     private void Awake()
@@ -202,8 +205,9 @@ public class GameRunner : MonoBehaviour {
             {
                 winnerStyle.normal.textColor = board.board.score[winner].x;
                 winnerStyle.fontSize = 32;
-                winnerString = "Player " + winner + " wins!";
+                winnerString = "Player " + (winner + 1) + " wins!";
             }
+
             winnerChosen = true;
             SaveCsv(winner, currentMax);
             SceneManager.LoadScene(0);
@@ -217,7 +221,7 @@ public class GameRunner : MonoBehaviour {
         if (winner < 0)
             data = "-1, tie, 0";
         else
-            data = score + ", " + playerTypes[winner] + ", " + score;
+            data = winner + ", " + playerTypes[winner] + ", " + score;
 
         if (!File.Exists(path))
         {
