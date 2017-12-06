@@ -4,8 +4,6 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Linq;
-using UnityEditor.Experimental.Build.Player;
-using UnityEditorInternal;
 using UnityEngine.SceneManagement;
 
 public class GameRunner : MonoBehaviour {
@@ -75,7 +73,18 @@ public class GameRunner : MonoBehaviour {
                     CreatePlayer(state, typeof(SimpleMaxScorePlayer), i);
                     break;
                 case (PlayerType.MaxScore):
-                    CreatePlayer(state, typeof(MaxScorePlayer), i);
+                    CreatePlayer(state, typeof(HeuristicPlayer), i);
+                    break;
+                case (PlayerType.MaxDiff):
+                    CreatePlayer(state, typeof(HeuristicPlayer), i);
+                    ((HeuristicPlayer) state.player).heuristic = new MaxDiffHeuristic();
+                    break;
+                case (PlayerType.QuickMaxScore):
+                    CreatePlayer(state, typeof(QuickHeuristicPlayer), i);
+                    break;
+                case (PlayerType.QuickMaxDiff):
+                    CreatePlayer(state, typeof(QuickHeuristicPlayer), i);
+                    ((QuickHeuristicPlayer)state.player).heuristic = new MaxDiffHeuristic();
                     break;
             }
             board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
@@ -93,8 +102,10 @@ public class GameRunner : MonoBehaviour {
             state.player = player.AddComponent<RandomPlayer>();
         else if (type == typeof(SimpleMaxScorePlayer))
             state.player = player.AddComponent<SimpleMaxScorePlayer>();
-        else if (type == typeof(MaxScorePlayer))
-            state.player = player.AddComponent<MaxScorePlayer>();
+        else if (type == typeof(HeuristicPlayer))
+            state.player = player.AddComponent<HeuristicPlayer>();
+        else if (type == typeof(QuickHeuristicPlayer))
+            state.player = player.AddComponent<QuickHeuristicPlayer>();
         state.x = startPairs[playerNumber].x;
         state.y = startPairs[playerNumber].y;
         state.startPosition = new Vector3(state.x -.1f, state.y);
@@ -210,10 +221,11 @@ public class GameRunner : MonoBehaviour {
 
         if (!File.Exists(path))
         {
-            File.Create(path);
+            using (File.Create(path)) ;
         }
-        TextWriter tw = new StreamWriter(path, true);
-        tw.WriteLine(data);
-        tw.Close();
+        using (var writer = File.AppendText(path))
+        {
+            writer.WriteLine(data);
+        }
     }
 }

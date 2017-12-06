@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-interface IHeuristic
+﻿public interface IHeuristic
 {
     int Score(Board board, int playerIndex);
 }
