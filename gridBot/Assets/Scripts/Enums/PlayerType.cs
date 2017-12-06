@@ -5,6 +5,9 @@
         Keyboard,
         Random,
         SimpleMaxScore,
-        MaxScore
+        MaxScore,
+        MaxDiff,
+        QuickMaxScore,
+        QuickMaxDiff
     }
 }

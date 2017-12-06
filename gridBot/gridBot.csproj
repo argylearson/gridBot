@@ -232,9 +232,11 @@
     <Compile Include="Assets\Scripts\GameComponents\PlayerState.cs" />
     <Compile Include="Assets\Scripts\Interfaces\Player.cs" />
     <Compile Include="Assets\Scripts\Players\Heuristics\IHeuristic.cs" />
+    <Compile Include="Assets\Scripts\Players\Heuristics\MaxDiffHeuristic.cs" />
     <Compile Include="Assets\Scripts\Players\Heuristics\MaxScoreHeuristic.cs" />
     <Compile Include="Assets\Scripts\Players\KeyboardPlayer.cs" />
-    <Compile Include="Assets\Scripts\Players\MaxScorePlayer.cs" />
+    <Compile Include="Assets\Scripts\Players\HeuristicPlayer.cs" />
+    <Compile Include="Assets\Scripts\Players\QuickHeuristicPlayer.cs" />
     <Compile Include="Assets\Scripts\Players\RandomPlayer.cs" />
     <Compile Include="Assets\Scripts\Players\SimpleMaxScorePlayer.cs" />
     <Compile Include="Assets\Scripts\Utilities\ColorUtil.cs" />

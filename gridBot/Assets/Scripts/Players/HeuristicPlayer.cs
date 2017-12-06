@@ -1,8 +1,9 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 
-public class MaxScorePlayer : Player
+public class HeuristicPlayer : Player
 {
-    private IHeuristic heuristic = new MaxScoreHeuristic();
+    public IHeuristic heuristic = new MaxScoreHeuristic();
     private int maxDepth = 2;
     private int myIndex;
     private int[] scores;
@@ -17,7 +18,7 @@ public class MaxScorePlayer : Player
     private Move BestMove(Board board, int playerIndex, int depth, out int maxScore)
     {
         Move bestMove = null;
-        maxScore = -1;
+        maxScore = Int32.MinValue;
         var moves = board.GetLegalMoves(board.score[playerIndex].x, board.playerPositions[playerIndex].x, board.playerPositions[playerIndex].y).ToArray();
         if (depth >= maxDepth * board.score.Length)
         {
