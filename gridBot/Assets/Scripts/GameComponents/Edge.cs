@@ -1,40 +1,21 @@
 ﻿using UnityEngine;
 
-public class Edge : MonoBehaviour {
+public class Edge {
 
     #region fields and properties
-    public IPlayer owner;
-    private SpriteRenderer sprite;
+    public Color playerColor;
     public readonly int x;
     public readonly int y;
-    private int _traversals;
-
-    public int Traversals
-    {
-        get { return _traversals; }
-    }
+    public int traversals;
     #endregion
 
     #region constructors
-    public Edge (int x, int y)
+
+    public Edge(int x, int y, Color color)
     {
         this.x = x;
         this.y = y;
-        sprite = gameObject.GetComponent<SpriteRenderer>();
-
-        sprite.color = Color.gray;
-        sprite.size = new Vector2(1, 1);
-        sprite.transform.parent = this.transform;
-        transform.position = new Vector3(x,y,0);
+        playerColor = color;
     }
     #endregion
-
-    // Use this for initialization
-    void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
 }
