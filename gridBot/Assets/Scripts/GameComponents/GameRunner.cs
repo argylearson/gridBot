@@ -34,6 +34,8 @@ public class GameRunner : MonoBehaviour {
     private GUIStyle winnerStyle = new GUIStyle();
     [SerializeField]
     private GridBotAgent agent;
+    private List<GridBotAgent> agents;
+    private int agentIndex;
     [SerializeField]
     private Brain brain;
 
@@ -49,7 +51,7 @@ public class GameRunner : MonoBehaviour {
         GUI.Label(new Rect(Screen.width / 2, 40, 50, 50), winnerString, winnerStyle);
 
         GUI.Label(new Rect(10, 20, 200, 50), "Current Player: " + (activePlayerNumber + 1));
-        GUI.Label(new Rect(10, 0, 200, 50), "Time Remaining: " + currentPlayersTime);
+        GUI.Label(new Rect(10, 0, 200, 50), "Time Remaining: " + (timeLimit - currentPlayersTime));
     }
 
     private void Awake()
@@ -57,8 +59,19 @@ public class GameRunner : MonoBehaviour {
         winnerString = "";
         players = new List<PlayerState>();
         board.scores = new string[playerTypes.Length];
-        //set the ml state size based on number of players and size of board
-        brain.brainParameters.stateSize = (playerTypes.Length * 2) + (board.height * (board.width + 1)) + ((board.height + 1) * board.width);
+        agentIndex = 0;
+        //only create players once;
+        if (agents == null)
+        {
+            agents = new List<GridBotAgent>();
+            //set the ml state size based on number of players and size of board
+            brain.brainParameters.stateSize = playerTypes.Length * 2 + board.height * (board.width + 1) + (board.height + 1) * board.width;
+            foreach (var type in playerTypes)
+            {
+                if (type == PlayerType.MLPlayer)
+                    agents.Add(Instantiate(agent));
+            }
+        }
         startPairs = new Pair<int, int>[]
         {
             new Pair<int, int>(0, 0),
@@ -99,9 +112,9 @@ public class GameRunner : MonoBehaviour {
                     break;
                 case (PlayerType.MLPlayer):
                     CreatePlayer(state, typeof(MLPlayer), i);
-                    var newAgent = Instantiate(agent);
-                    ((MLPlayer) state.player).agent = newAgent;
-                    newAgent.player = (MLPlayer) state.player;
+                    ((MLPlayer) state.player).agent = agents[agentIndex];
+                    agents[agentIndex].player = (MLPlayer) state.player;
+                    agentIndex++;
                     break;
             }
             board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
@@ -231,9 +244,34 @@ public class GameRunner : MonoBehaviour {
             }
 
             winnerChosen = true;
-            //SaveCsv(winner, currentMax);
-            //SceneManager.LoadScene(0);
         }
+        else if (AgentsReset())
+        {
+            ResetGame();
+        }
+    }
+
+    private void ResetGame()
+    {
+        foreach (var player in players)
+        {
+            Destroy(player.player);
+        }
+        board.Reset();
+        Awake();
+        numberOfTurns = 100;
+        currentPlayersTime = 0;
+        activePlayerNumber = 0;
+    }
+
+    private bool AgentsReset()
+    {
+        var result = true;
+        foreach (var agent in agents)
+        {
+            result &= !agent.done;
+        }
+        return result;
     }
 
     private void SaveCsv(int winner, int score)
