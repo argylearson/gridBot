@@ -227,12 +227,10 @@ public class GameRunner : MonoBehaviour {
                 }
                 else if (board.board.score[i].y == currentMax)
                     winner = -1;
-                if (playerTypes[i] == PlayerType.MLPlayer)
-                {
-                    var mlPlayer = (MLPlayer) players[i].player;
-                    mlPlayer.agent.reward = i == winner ? 1f : -1f;
-                    mlPlayer.agent.done = true;
-                }
+            }
+            foreach (var agent in agents)
+            {
+                agent.gameOver = winner;
             }
             if (winner < 0)
                 winnerString = "TIE GAME";
@@ -259,9 +257,10 @@ public class GameRunner : MonoBehaviour {
         }
         board.Reset();
         Awake();
-        numberOfTurns = 100;
+        numberOfTurns = 60;
         currentPlayersTime = 0;
         activePlayerNumber = 0;
+        winnerChosen = false;
     }
 
     private bool AgentsReset()
@@ -269,7 +268,7 @@ public class GameRunner : MonoBehaviour {
         var result = true;
         foreach (var agent in agents)
         {
-            result &= !agent.done;
+            result &= agent.gameOver == -2;
         }
         return result;
     }

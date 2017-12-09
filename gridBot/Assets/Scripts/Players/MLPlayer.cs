@@ -16,9 +16,10 @@ public class MLPlayer : Player
             {
                 direction = agent.direction.Value,
                 playerColor = spriteColor,
-                x = x,
-                y = y
+                x = board.playerPositions[board.TryGetPlayerIndex(spriteColor)].x,
+                y = board.playerPositions[board.TryGetPlayerIndex(spriteColor)].y
             };
+            board.AdjustPosition(board.TryGetPlayerIndex(spriteColor), agent.direction.Value);
             agent.direction = null;
             isTurn = false;
         }

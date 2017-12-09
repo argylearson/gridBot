@@ -13,13 +13,15 @@ namespace Assets.Scripts.MachineLearning
         public float targetNumber { get; set; }
         public float currentNumber { get; set; }
         public Text text;
+        public int gameOver = -2;
+        private int myId = -1;
 
         //must return a list of length 
         public override List<float> CollectState()
         {
             var result = new List<float>();
             var colorDict = new Dictionary<ColorStruct, int>();
-            if (player.isTurn)
+            if (player.isTurn && board != null)
             {
                 result.Add(board.TryGetPlayerIndex(player.spriteColor));
                 result.Add(board.playerPositions.Length);
@@ -43,6 +45,7 @@ namespace Assets.Scripts.MachineLearning
                                 result.Add(colorDict[lookup]);
                             else
                                 result.Add(-1);
+                            result.Add(board.horzEdges[i, j].traversals);
                         }
                         if (j != board.height)
                         {
@@ -52,6 +55,7 @@ namespace Assets.Scripts.MachineLearning
                                 result.Add(colorDict[lookup]);
                             else
                                 result.Add(-1);
+                            result.Add(board.vertEdges[i, j].traversals);
                         }
                     }
                 }
@@ -74,32 +78,68 @@ namespace Assets.Scripts.MachineLearning
 
         public override void AgentStep(float[] action)
         {
-            if (player.isTurn && !direction.HasValue)
+            if (gameOver < -1)
             {
-                switch ((int) action[0])
+                if (player.isTurn && !direction.HasValue)
                 {
-                    case 0:
-                        direction = EdgeDirection.Up;
-                        break;
-                    case 1:
-                        direction = EdgeDirection.Right;
-                        break;
-                    case 2:
-                        direction = EdgeDirection.Down;
-                        break;
-                    case 3:
-                        direction = EdgeDirection.Left;
-                        break;
-                    default:
-                        direction = null;
-                        break;
+                    switch ((int) action[0])
+                    {
+                        case 0:
+                            direction = EdgeDirection.Up;
+                            break;
+                        case 1:
+                            direction = EdgeDirection.Right;
+                            break;
+                        case 2:
+                            direction = EdgeDirection.Down;
+                            break;
+                        case 3:
+                            direction = EdgeDirection.Left;
+                            break;
+                        default:
+                            direction = null;
+                            break;
+                    }
+                    if (board != null && direction.HasValue)
+                    {
+                        if (myId < 0)
+                            myId = board.TryGetPlayerIndex(player.spriteColor);
+                        var move = new Move()
+                        {
+                            direction = direction.Value,
+                            playerColor = player.spriteColor,
+                            x = board.playerPositions[myId].x,
+                            y = board.playerPositions[myId].y
+                        };
+                        if (board.IsMoveLegal(move))
+                        {
+                            board.MakeMove(move);
+                            reward = (float) board.score[myId].y /
+                                     (board.height * (board.width + 1) + (board.height + 1) * board.width);
+                        }
+                        else
+                        {
+                            reward = -1f;
+                        }
+                    }
+                    if ((int) action[0] > -1)
+                    {
+                        text.text = ((int) action[0]).ToString();
+                        text.text += ": " + reward;
+                    }
                 }
-                text.text = ((int) action[0]).ToString();
-                if (board != null)
-                {
-                    reward = (float) board.score[board.TryGetPlayerIndex(player.spriteColor)].y /
-                             (board.height * (board.width + 1) + (board.height + 1) * board.width);
-                }
+            }
+            else
+            {
+                done = true;
+                if (gameOver == myId)
+                    reward = 1f;
+                else if (gameOver > -1)
+                    reward = -1f;
+                else
+                    reward = 0;
+                text.text = "Reward for game end: " + reward;
+                gameOver = -2;
             }
         }
     }
