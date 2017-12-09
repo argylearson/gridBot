@@ -2,8 +2,10 @@
 using Assets.Scripts.Enums;
 using UnityEngine;
 using System;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
+using Assets.Scripts.MachineLearning;
 using UnityEngine.SceneManagement;
 
 public class GameRunner : MonoBehaviour {
@@ -30,6 +32,9 @@ public class GameRunner : MonoBehaviour {
     private string winnerString;
     private bool winnerChosen = false;
     private GUIStyle winnerStyle = new GUIStyle();
+    [SerializeField]
+    private GridBotAgent agent;
+    private List<GridBotAgent> agents;
 
     private void OnGUI()
     {
@@ -89,6 +94,12 @@ public class GameRunner : MonoBehaviour {
                     CreatePlayer(state, typeof(QuickHeuristicPlayer), i);
                     ((QuickHeuristicPlayer)state.player).heuristic = new MaxDiffHeuristic();
                     break;
+                case (PlayerType.MLPlayer):
+                    CreatePlayer(state, typeof(MLPlayer), i);
+                    var newAgent = Instantiate(agent);
+                    ((MLPlayer) state.player).agent = newAgent;
+                    newAgent.player = (MLPlayer) state.player;
+                    break;
             }
             board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
             board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
@@ -109,6 +120,8 @@ public class GameRunner : MonoBehaviour {
             state.player = player.AddComponent<HeuristicPlayer>();
         else if (type == typeof(QuickHeuristicPlayer))
             state.player = player.AddComponent<QuickHeuristicPlayer>();
+        else if (type == typeof(MLPlayer))
+            state.player = player.AddComponent<MLPlayer>();
         state.x = startPairs[playerNumber].x;
         state.y = startPairs[playerNumber].y;
         state.startPosition = new Vector3(state.x -.1f, state.y);
