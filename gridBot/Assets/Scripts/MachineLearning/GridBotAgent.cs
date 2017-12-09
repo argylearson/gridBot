@@ -44,13 +44,21 @@ namespace Assets.Scripts.MachineLearning
                         }
                         if (j != board.height)
                         {
-                            var color = board.vertEdges[i, j].playerColor; var lookup = new ColorStruct(color.r, color.g, color.b);
+                            var color = board.vertEdges[i, j].playerColor;
+                            var lookup = new ColorStruct(color.r, color.g, color.b);
                             if (colorDict.ContainsKey(lookup))
                                 result.Add(colorDict[lookup]);
                             else
                                 result.Add(-1);
                         }
                     }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < brain.brainParameters.stateSize; i++)
+                {
+                    result.Add(0);
                 }
             }
             return result;
@@ -78,6 +86,11 @@ namespace Assets.Scripts.MachineLearning
                 case 3:
                     direction = EdgeDirection.Left;
                     break;
+            }
+            if (board != null)
+            {
+                reward = (float) board.score[board.TryGetPlayerIndex(player.spriteColor)].y /
+                         (board.height * (board.width + 1) + (board.height + 1) * board.width);
             }
             board = null;
         }

@@ -43,11 +43,11 @@ public class GuiBoard : MonoBehaviour
             {
                 if (i != width)
                 {
-                    Destroy(horzEdges[i, j]);
+                    Destroy(horzEdges[i, j].gameObject);
                 }
                 if (j != height)
                 {
-                    Destroy(vertEdges[i, j]);
+                    Destroy(vertEdges[i, j].gameObject);
                 }
             }
         }

@@ -63,6 +63,7 @@ public class GameRunner : MonoBehaviour {
         //only create players once;
         if (agents == null)
         {
+            agent.brain = brain;
             agents = new List<GridBotAgent>();
             //set the ml state size based on number of players and size of board
             brain.brainParameters.stateSize = playerTypes.Length * 2 + board.height * (board.width + 1) + (board.height + 1) * board.width;
@@ -255,7 +256,7 @@ public class GameRunner : MonoBehaviour {
     {
         foreach (var player in players)
         {
-            Destroy(player.player);
+            Destroy(player.player.gameObject);
         }
         board.Reset();
         Awake();
