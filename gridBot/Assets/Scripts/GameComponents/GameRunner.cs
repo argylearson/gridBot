@@ -34,6 +34,7 @@ public class GameRunner : MonoBehaviour {
     private GUIStyle winnerStyle = new GUIStyle();
     [SerializeField]
     private GridBotAgent agent;
+    [SerializeField]
     private List<GridBotAgent> agents;
     private int agentIndex;
     [SerializeField]
@@ -60,19 +61,17 @@ public class GameRunner : MonoBehaviour {
         players = new List<PlayerState>();
         board.scores = new string[playerTypes.Length];
         agentIndex = 0;
-        //only create players once;
-        if (agents == null)
+        //only create agents once;
+        /*if (agents == null)
         {
             agent.brain = brain;
             agents = new List<GridBotAgent>();
-            //set the ml state size based on number of players and size of board
-            brain.brainParameters.stateSize = playerTypes.Length * 2 + board.height * (board.width + 1) + (board.height + 1) * board.width;
             foreach (var type in playerTypes)
             {
                 if (type == PlayerType.MLPlayer)
                     agents.Add(Instantiate(agent));
             }
-        }
+        }*/
         startPairs = new Pair<int, int>[]
         {
             new Pair<int, int>(0, 0),
@@ -231,7 +230,7 @@ public class GameRunner : MonoBehaviour {
                 if (playerTypes[i] == PlayerType.MLPlayer)
                 {
                     var mlPlayer = (MLPlayer) players[i].player;
-                    mlPlayer.agent.reward = i == winner ? 1f : 0f;
+                    mlPlayer.agent.reward = i == winner ? 1f : -1f;
                     mlPlayer.agent.done = true;
                 }
             }

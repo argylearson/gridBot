@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityEngine;
 using UnityEngine.UI;
 
 namespace Assets.Scripts.MachineLearning
@@ -13,21 +12,24 @@ namespace Assets.Scripts.MachineLearning
 
         public float targetNumber { get; set; }
         public float currentNumber { get; set; }
+        public Text text;
 
         //must return a list of length 
         public override List<float> CollectState()
         {
             var result = new List<float>();
             var colorDict = new Dictionary<ColorStruct, int>();
-            if (board != null)
+            if (player.isTurn)
             {
+                result.Add(board.TryGetPlayerIndex(player.spriteColor));
+                result.Add(board.playerPositions.Length);
                 for (int i = 0; i < board.playerPositions.Length; i++)
                 {
                     result.Add(board.playerPositions[i].x);
                     result.Add(board.playerPositions[i].y);
                     var color = board.score[i].x;
                     var key = new ColorStruct(color.r, color.g, color.b);
-                    colorDict.Add(key, board.score[i].y);
+                    colorDict.Add(key, i);
                 }
                 for (int i = 0; i <= board.width; i++)
                 {
@@ -58,7 +60,7 @@ namespace Assets.Scripts.MachineLearning
             {
                 for (int i = 0; i < brain.brainParameters.stateSize; i++)
                 {
-                    result.Add(0);
+                    result.Add(.1f);
                 }
             }
             return result;
@@ -72,27 +74,33 @@ namespace Assets.Scripts.MachineLearning
 
         public override void AgentStep(float[] action)
         {
-            switch ((int)action[0])
+            if (player.isTurn && !direction.HasValue)
             {
-                case 0:
-                    direction = EdgeDirection.Up;
-                    break;
-                case 1:
-                    direction = EdgeDirection.Right;
-                    break;
-                case 2:
-                    direction = EdgeDirection.Down;
-                    break;
-                case 3:
-                    direction = EdgeDirection.Left;
-                    break;
+                switch ((int) action[0])
+                {
+                    case 0:
+                        direction = EdgeDirection.Up;
+                        break;
+                    case 1:
+                        direction = EdgeDirection.Right;
+                        break;
+                    case 2:
+                        direction = EdgeDirection.Down;
+                        break;
+                    case 3:
+                        direction = EdgeDirection.Left;
+                        break;
+                    default:
+                        direction = null;
+                        break;
+                }
+                text.text = ((int) action[0]).ToString();
+                if (board != null)
+                {
+                    reward = (float) board.score[board.TryGetPlayerIndex(player.spriteColor)].y /
+                             (board.height * (board.width + 1) + (board.height + 1) * board.width);
+                }
             }
-            if (board != null)
-            {
-                reward = (float) board.score[board.TryGetPlayerIndex(player.spriteColor)].y /
-                         (board.height * (board.width + 1) + (board.height + 1) * board.width);
-            }
-            board = null;
         }
     }
 }

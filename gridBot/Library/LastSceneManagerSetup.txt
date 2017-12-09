@@ -1,4 +1,4 @@
 sceneSetups:
-- path: B:/AITest/AiTest/Assets/demo.unity
+- path: Assets/BoardGame.unity
   isLoaded: 1
   isActive: 1

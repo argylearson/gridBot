@@ -1,14 +1,15 @@
-﻿using System.Collections;
-using Assets.Scripts.MachineLearning;
-using UnityEngine;
+﻿using Assets.Scripts.MachineLearning;
 
 public class MLPlayer : Player
 {
     public GridBotAgent agent;
+    public bool isTurn;
 
     public override Move MakeMove(Board board, float timeLimit)
     {
         Move move = null;
+        isTurn = true;
+        agent.board = board;
         if (agent.direction.HasValue)
         {
             move = new Move()
@@ -19,12 +20,7 @@ public class MLPlayer : Player
                 y = y
             };
             agent.direction = null;
-            agent.board = null;
-        }
-        else if (agent.board == null)
-        {
-            agent.board = board;
-            agent.direction = null;
+            isTurn = false;
         }
         return move;
     }
