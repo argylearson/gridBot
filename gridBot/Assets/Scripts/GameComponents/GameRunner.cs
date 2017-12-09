@@ -34,7 +34,8 @@ public class GameRunner : MonoBehaviour {
     private GUIStyle winnerStyle = new GUIStyle();
     [SerializeField]
     private GridBotAgent agent;
-    private List<GridBotAgent> agents;
+    [SerializeField]
+    private Brain brain;
 
     private void OnGUI()
     {
@@ -56,6 +57,8 @@ public class GameRunner : MonoBehaviour {
         winnerString = "";
         players = new List<PlayerState>();
         board.scores = new string[playerTypes.Length];
+        //set the ml state size based on number of players and size of board
+        brain.brainParameters.stateSize = (playerTypes.Length * 2) + (board.height * (board.width + 1)) + ((board.height + 1) * board.width);
         startPairs = new Pair<int, int>[]
         {
             new Pair<int, int>(0, 0),
@@ -211,6 +214,12 @@ public class GameRunner : MonoBehaviour {
                 }
                 else if (board.board.score[i].y == currentMax)
                     winner = -1;
+                if (playerTypes[i] == PlayerType.MLPlayer)
+                {
+                    var mlPlayer = (MLPlayer) players[i].player;
+                    mlPlayer.agent.reward = i == winner ? 1f : 0f;
+                    mlPlayer.agent.done = true;
+                }
             }
             if (winner < 0)
                 winnerString = "TIE GAME";
@@ -222,8 +231,8 @@ public class GameRunner : MonoBehaviour {
             }
 
             winnerChosen = true;
-            SaveCsv(winner, currentMax);
-            SceneManager.LoadScene(0);
+            //SaveCsv(winner, currentMax);
+            //SceneManager.LoadScene(0);
         }
     }
 
@@ -238,7 +247,7 @@ public class GameRunner : MonoBehaviour {
 
         if (!File.Exists(path))
         {
-            using (File.Create(path)) ;
+            using (File.Create(path));
         }
         using (var writer = File.AppendText(path))
         {
