@@ -231,6 +231,7 @@ public class GameRunner : MonoBehaviour {
             foreach (var agent in agents)
             {
                 agent.gameOver = winner;
+                agent.board = board.board.DeepCopy();
             }
             if (winner < 0)
                 winnerString = "TIE GAME";

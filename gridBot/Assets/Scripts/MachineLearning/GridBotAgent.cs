@@ -15,23 +15,30 @@ namespace Assets.Scripts.MachineLearning
         public Text text;
         public int gameOver = -2;
         private int myId = -1;
+        private int numberOfEdges = -1;
+        private Dictionary<ColorStruct, int> colorDict = null;
 
         //must return a list of length 
         public override List<float> CollectState()
         {
             var result = new List<float>();
-            var colorDict = new Dictionary<ColorStruct, int>();
             if (player.isTurn && board != null)
             {
-                result.Add(board.TryGetPlayerIndex(player.spriteColor));
-                result.Add(board.playerPositions.Length);
+                if (colorDict == null)
+                {
+                    colorDict = new Dictionary<ColorStruct, int>();
+                    for (int i = 0; i < board.playerPositions.Length; i++)
+                    {
+                        var color = board.score[i].x;
+                        var key = new ColorStruct(color.r, color.g, color.b);
+                        colorDict.Add(key, i);
+                    }
+                }
+                result.Add((float)board.TryGetPlayerIndex(player.spriteColor) / board.playerPositions.Length);
                 for (int i = 0; i < board.playerPositions.Length; i++)
                 {
-                    result.Add(board.playerPositions[i].x);
-                    result.Add(board.playerPositions[i].y);
-                    var color = board.score[i].x;
-                    var key = new ColorStruct(color.r, color.g, color.b);
-                    colorDict.Add(key, i);
+                    result.Add((float) board.playerPositions[i].x / board.width);
+                    result.Add((float) board.playerPositions[i].y / board.height);
                 }
                 for (int i = 0; i <= board.width; i++)
                 {
@@ -42,20 +49,20 @@ namespace Assets.Scripts.MachineLearning
                             var color = board.horzEdges[i, j].playerColor;
                             var lookup = new ColorStruct(color.r, color.g, color.b);
                             if (colorDict.ContainsKey(lookup))
-                                result.Add(colorDict[lookup]);
+                                result.Add((float)colorDict[lookup]/board.playerPositions.Length);
                             else
                                 result.Add(-1);
-                            result.Add(board.horzEdges[i, j].traversals);
+                            result.Add((float) board.horzEdges[i, j].traversals / board.maxTraversals);
                         }
                         if (j != board.height)
                         {
                             var color = board.vertEdges[i, j].playerColor;
                             var lookup = new ColorStruct(color.r, color.g, color.b);
                             if (colorDict.ContainsKey(lookup))
-                                result.Add(colorDict[lookup]);
+                                result.Add((float)colorDict[lookup] / board.playerPositions.Length);
                             else
                                 result.Add(-1);
-                            result.Add(board.vertEdges[i, j].traversals);
+                            result.Add((float)board.vertEdges[i, j].traversals / board.maxTraversals);
                         }
                     }
                 }
@@ -64,7 +71,7 @@ namespace Assets.Scripts.MachineLearning
             {
                 for (int i = 0; i < brain.brainParameters.stateSize; i++)
                 {
-                    result.Add(.1f);
+                    result.Add(-1f);
                 }
             }
             return result;
@@ -104,6 +111,8 @@ namespace Assets.Scripts.MachineLearning
                     {
                         if (myId < 0)
                             myId = board.TryGetPlayerIndex(player.spriteColor);
+                        if (numberOfEdges < 0)
+                            numberOfEdges = board.height * (board.width + 1) + (board.height + 1) * board.width;
                         var move = new Move()
                         {
                             direction = direction.Value,
@@ -114,12 +123,11 @@ namespace Assets.Scripts.MachineLearning
                         if (board.IsMoveLegal(move))
                         {
                             board.MakeMove(move);
-                            reward = (float) board.score[myId].y /
-                                     (board.height * (board.width + 1) + (board.height + 1) * board.width);
+                            reward = (float) board.score[myId].y / numberOfEdges;
                         }
                         else
                         {
-                            reward = -1f;
+                            reward = 0f;
                         }
                     }
                     if ((int) action[0] > -1)
@@ -134,8 +142,6 @@ namespace Assets.Scripts.MachineLearning
                 done = true;
                 if (gameOver == myId)
                     reward = 1f;
-                else if (gameOver > -1)
-                    reward = -1f;
                 else
                     reward = 0;
                 text.text = "Reward for game end: " + reward;
