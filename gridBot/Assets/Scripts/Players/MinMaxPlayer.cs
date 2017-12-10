@@ -8,7 +8,7 @@ public class MinMaxPlayer : Player
     private int myIndex;
     private int currentMin = Int32.MaxValue;
     private int currentMax = Int32.MinValue;
-
+ 
     public override Move MakeMove(Board board, float timeLimit)
     {
         myIndex = board.TryGetPlayerIndex(spriteColor);
@@ -16,12 +16,14 @@ public class MinMaxPlayer : Player
         return BestMove(board, myIndex, 0, out score);
     }
 
+    
     private Move BestMove(Board board, int playerIndex, int depth, out int outScore)
     {
         Move bestMove = null;
         int localBest;
+        outScore = 0;
         var moves = board.GetLegalMoves(board.score[playerIndex].x, board.playerPositions[playerIndex].x, board.playerPositions[playerIndex].y).ToArray();
-        if (depth >= maxDepth * board.score.Length)
+        if (depth >= maxDepth * board.score.Length) 
         {
             foreach (var move in moves)
             {

@@ -89,6 +89,9 @@ public class GameRunner : MonoBehaviour {
                     CreatePlayer(state, typeof(QuickHeuristicPlayer), i);
                     ((QuickHeuristicPlayer)state.player).heuristic = new MaxDiffHeuristic();
                     break;
+                case (PlayerType.MinMaxPlayer):
+                    CreatePlayer(state, typeof(HeuristicPlayer), i);
+                    break;
             }
             board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
             board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
