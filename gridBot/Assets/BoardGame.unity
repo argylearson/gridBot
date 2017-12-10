@@ -264,10 +264,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   board: {fileID: 1190444722}
-  playerTypes: 0000000003000000
+  playerTypes: 04000000010000000300000001000000
   playerColors:
   - {r: 0.2352941, g: 0.62028414, b: 1, a: 1}
   - {r: 1, g: 0.68275857, b: 0, a: 1}
+  - {r: 0, g: 0.6838235, b: 0.14619671, a: 1}
+  - {r: 0.77205884, g: 0.034061406, b: 0.72116256, a: 1}
   playerSprite: {fileID: 21300000, guid: 12a42cdf574126a45a64e5521a84f4dd, type: 3}
   activePlayerNumber: 0
   timeLimit: 5

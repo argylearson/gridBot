@@ -8,6 +8,7 @@
         MaxScore,
         MaxDiff,
         QuickMaxScore,
-        QuickMaxDiff
+        QuickMaxDiff,
+        MinMaxPlayer
     }
 }
