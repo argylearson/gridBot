@@ -112,6 +112,10 @@ public class GameRunner : MonoBehaviour {
                     CreatePlayer(state, typeof(QuickHeuristicPlayer), i);
                     ((QuickHeuristicPlayer)state.player).heuristic = new MaxDiffHeuristic();
                     break;
+                case (PlayerType.MinMax):
+                    CreatePlayer(state, typeof(HeuristicPlayer), i);
+                    ((HeuristicPlayer)state.player).heuristic = new MaxScoreHeuristic();
+                    break;
                 case (PlayerType.MLPlayer):
                     CreatePlayer(state, typeof(MLPlayer), i);
                     ((MLPlayer) state.player).agent = agents[agentIndex];
