@@ -4,7 +4,7 @@ using System.Linq;
 public class HeuristicPlayer : Player
 {
     public IHeuristic heuristic = new MaxScoreHeuristic();
-    private int maxDepth = 4;
+    private int maxDepth = 2;
     private int myIndex;
 
     public override Move MakeMove(Board board, float timeLimit)
