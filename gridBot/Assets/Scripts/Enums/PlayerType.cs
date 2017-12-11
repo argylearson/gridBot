@@ -9,6 +9,7 @@
         MaxDiff,
         QuickMaxScore,
         QuickMaxDiff,
-        MLPlayer
+        MLPlayer,
+        MinMax
     }
 }
