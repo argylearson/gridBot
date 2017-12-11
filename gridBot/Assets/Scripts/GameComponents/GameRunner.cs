@@ -6,6 +6,7 @@ using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
 using Assets.Scripts.MachineLearning;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class GameRunner : MonoBehaviour {
@@ -39,6 +40,7 @@ public class GameRunner : MonoBehaviour {
     private int agentIndex;
     [SerializeField]
     private Brain brain;
+    private int framesSinceAgent = 0;
 
     private void OnGUI()
     {
@@ -160,6 +162,7 @@ public class GameRunner : MonoBehaviour {
 
     private void Update()
     {
+        agents[0].text.text = framesSinceAgent.ToString();
         for (int i = 0; i < playerTypes.Length; i++)
         {
             players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition,
@@ -258,6 +261,10 @@ public class GameRunner : MonoBehaviour {
         }
         board.Reset();
         Awake();
+        foreach (var agent in agents)
+        {
+            agent.board = board.board.DeepCopy();
+        }
         numberOfTurns = 60;
         currentPlayersTime = 0;
         activePlayerNumber = 0;
