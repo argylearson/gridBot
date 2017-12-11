@@ -113,8 +113,8 @@ public class GameRunner : MonoBehaviour {
                     ((QuickHeuristicPlayer)state.player).heuristic = new MaxDiffHeuristic();
                     break;
                 case (PlayerType.MinMax):
-                    CreatePlayer(state, typeof(HeuristicPlayer), i);
-                    ((HeuristicPlayer)state.player).heuristic = new MaxScoreHeuristic();
+                    CreatePlayer(state, typeof(MinMaxPlayer), i);
+                    ((MinMaxPlayer)state.player).heuristic = new MaxScoreHeuristic();
                     break;
                 case (PlayerType.MLPlayer):
                     CreatePlayer(state, typeof(MLPlayer), i);
