@@ -35,6 +35,25 @@ public class GuiBoard : MonoBehaviour
         }
     }
 
+    public void Reset()
+    {
+        for (int i = 0; i <= width; i++)
+        {
+            for (int j = 0; j <= height; j++)
+            {
+                if (i != width)
+                {
+                    Destroy(horzEdges[i, j].gameObject);
+                }
+                if (j != height)
+                {
+                    Destroy(vertEdges[i, j].gameObject);
+                }
+            }
+        }
+        Awake();
+    }
+
     private GuiEdge CreateEdge(int i, int j, EdgeDirection direction)
     {
         var position = direction == EdgeDirection.Right ? new Vector3(i + .4f, j, 0) : new Vector3(i - .1f, j + .5f, 0);

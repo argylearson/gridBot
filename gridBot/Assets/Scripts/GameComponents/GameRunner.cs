@@ -2,8 +2,11 @@
 using Assets.Scripts.Enums;
 using UnityEngine;
 using System;
+using System.ComponentModel.Design;
 using System.IO;
 using System.Linq;
+using Assets.Scripts.MachineLearning;
+using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 
 public class GameRunner : MonoBehaviour {
@@ -30,6 +33,14 @@ public class GameRunner : MonoBehaviour {
     private string winnerString;
     private bool winnerChosen = false;
     private GUIStyle winnerStyle = new GUIStyle();
+    [SerializeField]
+    private GridBotAgent agent;
+    [SerializeField]
+    private List<GridBotAgent> agents;
+    private int agentIndex;
+    [SerializeField]
+    private Brain brain;
+    private int framesSinceAgent = 0;
 
     private void OnGUI()
     {
@@ -43,7 +54,7 @@ public class GameRunner : MonoBehaviour {
         GUI.Label(new Rect(Screen.width / 2, 40, 50, 50), winnerString, winnerStyle);
 
         GUI.Label(new Rect(10, 20, 200, 50), "Current Player: " + (activePlayerNumber + 1));
-        GUI.Label(new Rect(10, 0, 200, 50), "Time Remaining: " + currentPlayersTime);
+        GUI.Label(new Rect(10, 0, 200, 50), "Time Remaining: " + (timeLimit - currentPlayersTime));
     }
 
     private void Awake()
@@ -51,6 +62,18 @@ public class GameRunner : MonoBehaviour {
         winnerString = "";
         players = new List<PlayerState>();
         board.scores = new string[playerTypes.Length];
+        agentIndex = 0;
+        //only create agents once;
+        /*if (agents == null)
+        {
+            agent.brain = brain;
+            agents = new List<GridBotAgent>();
+            foreach (var type in playerTypes)
+            {
+                if (type == PlayerType.MLPlayer)
+                    agents.Add(Instantiate(agent));
+            }
+        }*/
         startPairs = new Pair<int, int>[]
         {
             new Pair<int, int>(0, 0),
@@ -89,6 +112,12 @@ public class GameRunner : MonoBehaviour {
                     CreatePlayer(state, typeof(QuickHeuristicPlayer), i);
                     ((QuickHeuristicPlayer)state.player).heuristic = new MaxDiffHeuristic();
                     break;
+                case (PlayerType.MLPlayer):
+                    CreatePlayer(state, typeof(MLPlayer), i);
+                    ((MLPlayer) state.player).agent = agents[agentIndex];
+                    agents[agentIndex].player = (MLPlayer) state.player;
+                    agentIndex++;
+                    break;
             }
             board.board.playerPositions[i] = new Pair<int, int>(players[i].x, players[i].y);
             board.board.score[i] = new Pair<Color, int>(playerColors[i], 0);
@@ -109,6 +138,8 @@ public class GameRunner : MonoBehaviour {
             state.player = player.AddComponent<HeuristicPlayer>();
         else if (type == typeof(QuickHeuristicPlayer))
             state.player = player.AddComponent<QuickHeuristicPlayer>();
+        else if (type == typeof(MLPlayer))
+            state.player = player.AddComponent<MLPlayer>();
         state.x = startPairs[playerNumber].x;
         state.y = startPairs[playerNumber].y;
         state.startPosition = new Vector3(state.x -.1f, state.y);
@@ -131,6 +162,7 @@ public class GameRunner : MonoBehaviour {
 
     private void Update()
     {
+        agents[0].text.text = framesSinceAgent.ToString();
         for (int i = 0; i < playerTypes.Length; i++)
         {
             players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition,
@@ -199,6 +231,11 @@ public class GameRunner : MonoBehaviour {
                 else if (board.board.score[i].y == currentMax)
                     winner = -1;
             }
+            foreach (var agent in agents)
+            {
+                agent.gameOver = winner;
+                agent.board = board.board.DeepCopy();
+            }
             if (winner < 0)
                 winnerString = "TIE GAME";
             else
@@ -209,9 +246,39 @@ public class GameRunner : MonoBehaviour {
             }
 
             winnerChosen = true;
-            SaveCsv(winner, currentMax);
-            SceneManager.LoadScene(0);
         }
+        else if (AgentsReset())
+        {
+            ResetGame();
+        }
+    }
+
+    private void ResetGame()
+    {
+        foreach (var player in players)
+        {
+            Destroy(player.player.gameObject);
+        }
+        board.Reset();
+        Awake();
+        foreach (var agent in agents)
+        {
+            agent.board = board.board.DeepCopy();
+        }
+        numberOfTurns = 60;
+        currentPlayersTime = 0;
+        activePlayerNumber = 0;
+        winnerChosen = false;
+    }
+
+    private bool AgentsReset()
+    {
+        var result = true;
+        foreach (var agent in agents)
+        {
+            result &= agent.gameOver == -2;
+        }
+        return result;
     }
 
     private void SaveCsv(int winner, int score)
@@ -225,7 +292,7 @@ public class GameRunner : MonoBehaviour {
 
         if (!File.Exists(path))
         {
-            using (File.Create(path)) ;
+            using (File.Create(path));
         }
         using (var writer = File.AppendText(path))
         {
