@@ -125,7 +125,8 @@ namespace Assets.Scripts.MachineLearning
                         {
                             reward -= .1f;
                         }
-                        reward += heurValue * .1f;
+                        if (heurValue > 0)
+                            reward += heurValue * .1f;
                     }
                 }
                 reward = Math.Min(reward, 1f);
