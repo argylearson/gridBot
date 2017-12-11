@@ -281,6 +281,7 @@
     <Compile Include="Assets\Scripts\Players\Heuristics\MaxDiffHeuristic.cs" />
     <Compile Include="Assets\Scripts\Players\Heuristics\MaxScoreHeuristic.cs" />
     <Compile Include="Assets\Scripts\Players\KeyboardPlayer.cs" />
+    <Compile Include="Assets\Scripts\Players\MinMaxPlayer.cs" />
     <Compile Include="Assets\Scripts\Players\MLPlayer.cs" />
     <Compile Include="Assets\Scripts\Players\QuickHeuristicPlayer.cs" />
     <Compile Include="Assets\Scripts\Players\RandomPlayer.cs" />

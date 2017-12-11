@@ -112,6 +112,10 @@ public class GameRunner : MonoBehaviour {
                     CreatePlayer(state, typeof(QuickHeuristicPlayer), i);
                     ((QuickHeuristicPlayer)state.player).heuristic = new MaxDiffHeuristic();
                     break;
+                case (PlayerType.MinMax):
+                    CreatePlayer(state, typeof(MinMaxPlayer), i);
+                    ((MinMaxPlayer)state.player).heuristic = new MaxScoreHeuristic();
+                    break;
                 case (PlayerType.MLPlayer):
                     CreatePlayer(state, typeof(MLPlayer), i);
                     ((MLPlayer) state.player).agent = agents[agentIndex];
@@ -140,6 +144,8 @@ public class GameRunner : MonoBehaviour {
             state.player = player.AddComponent<QuickHeuristicPlayer>();
         else if (type == typeof(MLPlayer))
             state.player = player.AddComponent<MLPlayer>();
+        else if (type == typeof(MinMaxPlayer))
+            state.player = player.AddComponent<MinMaxPlayer>();
         state.x = startPairs[playerNumber].x;
         state.y = startPairs[playerNumber].y;
         state.startPosition = new Vector3(state.x -.1f, state.y);
@@ -162,7 +168,6 @@ public class GameRunner : MonoBehaviour {
 
     private void Update()
     {
-        agents[0].text.text = framesSinceAgent.ToString();
         for (int i = 0; i < playerTypes.Length; i++)
         {
             players[i].player.transform.position = Vector3.Lerp(players[i].startPosition, players[i].endPosition,
@@ -245,6 +250,7 @@ public class GameRunner : MonoBehaviour {
                 winnerString = "Player " + (winner + 1) + " wins!";
             }
 
+            SaveCsv(winner);
             winnerChosen = true;
         }
         else if (AgentsReset())
@@ -281,14 +287,16 @@ public class GameRunner : MonoBehaviour {
         return result;
     }
 
-    private void SaveCsv(int winner, int score)
+    private void SaveCsv(int winner)
     {
         string path = @"/Saved_data.csv";
         string data;
         if (winner < 0)
             data = "-1, tie, 0";
         else
-            data = winner + ", " + playerTypes[winner] + ", " + score;
+        {
+            data = winner + ", " + playerTypes[winner] + ", " + board.board.score[winner].y;
+        }
 
         if (!File.Exists(path))
         {
